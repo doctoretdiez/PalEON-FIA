@@ -317,11 +317,11 @@ for(s in 1:length(spp.unique)){
                            y=spp.albers$y[which(spp.albers$spcd==spp.unique[s])],
                            dbh=spp.albers$dbh[which(spp.albers$spcd==spp.unique[s])]))
 
-    #fill plots with no spp present as zero
-    empty.pts <- pts.albers[!(pts.albers %in% coordinates(dbh.raw[[s]][,1:2]))]
-    zero.pts  <- cbind(empty.pts[1:(length(empty.pts)/2)],empty.pts[(length(empty.pts)/2+1):length(empty.pts)]) #dumb way
-    zero.thin <- zero.pts[seq(1,nrow(zero.pts),by=25),] #thin these or the spline will take forever and crash
-    dbh.raw[[s]]  <- rbind(dbh.raw[[s]],cbind(zero.thin,rep(0,length=nrow(zero.thin)))) #add in plots with no spp
+#     #fill plots with no spp present as zero
+#     empty.pts <- pts.albers[!(pts.albers %in% coordinates(dbh.raw[[s]][,1:2]))]
+#     zero.pts  <- cbind(empty.pts[1:(length(empty.pts)/2)],empty.pts[(length(empty.pts)/2+1):length(empty.pts)]) #dumb way
+#     zero.thin <- zero.pts[seq(1,nrow(zero.pts),by=25),] #thin these or the spline will take forever and crash
+#     dbh.raw[[s]]  <- rbind(dbh.raw[[s]],cbind(zero.thin,rep(0,length=nrow(zero.thin)))) #add in plots with no spp
     
 #     tps <- Tps(dbh.raw[[s]][,1:2], dbh.raw[[s]][,3]) #thin plate spline fit
 #     dbh.grid[[s]] <- interpolate(base.rast, tps)     #interpolate spline to new grid
