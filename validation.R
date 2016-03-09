@@ -11,8 +11,7 @@ GETDF_FROMLIST <- function(DF_LIST, ITEM_LOC){
   DF_SELECTED <- DF_LIST[[ITEM_LOC]]
   return(DF_SELECTED)
 }
-FIA_spp_dbh_PIRI.tif
-newin <- raster('FIA_spp_dbh_PIRI.tif')
+
 # ------------------Import Data Files-------------------
 # Import conversion csv
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/')
@@ -56,18 +55,19 @@ valid_ras_files <- lapply(valid_ras_list, raster)
 
 #------------------Compare and Plot----------------------
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v3_dbh.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_v3_biomass.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
 nsims <- length(ras_list) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
-for (i in 34:length(ras_list)){
+for (i in 1:length(ras_list)){
   data_file <- GETDF_FROMLIST(ras_files, i)
   sppcode <- data.frame(strsplit(names(ras_files[[i]]), split = "_", fixed=TRUE))
   sppsciname <- subset(spptable, acronym == as.character(sppcode[4,1]), select = scientific_name)
   if (length(sppsciname)>1){stop(paste(sppcode[4,1], sppsciname[[1]], "Error, i=", i, sep=" "))}
   valid_data_number <- which(grepl(sppsciname[[1]], valid_ras_list))
   if (length(valid_data_number)>1){stop(paste(sppcode[4,1], sppsciname[[1]], "Error, i=", i, sep=" "))}
-  if (length(valid_data_number)==1){
+  if (length(valid_data_number)==1 && !(as.character(sppcode[4,1]) %in% c("PIRI", "PIVI2", "QUPR2"))){ # use for DBH and biomass
+  # if (length(valid_data_number)==1){
     valid_file <- GETDF_FROMLIST(valid_ras_files, valid_data_number)
     resamplefia <- resample(data_file, valid_file)
     comp.rast <- resamplefia-valid_file
@@ -76,12 +76,23 @@ for (i in 34:length(ras_list)){
     plot(resamplefia, main=sppcode[4,1])
     plot(valid_file, main=sppsciname[[1]])
     plot(comp.rast)
-    # limits for each parameter: BAS
+    # Ranges for each parameter (SELECT ONE) 
+    # myrange <- c(20,140) #DBH
+#     myrange <- c(0,3000) #Density
+#     plot(resamplefia, valid_file, xlim=myrange, ylim=myrange)
     plot(resamplefia, valid_file)
+    abline(0,1,col="red",lwd=1,lty=3)
     #hist(comp.rast, main=NULL, xlab=NULL, ylab=NULL)
-  } else {
+  } 
+  if (length(valid_data_number)!=1) {
     plot(data_file, main=sppcode[4,1])
     frame()
+    frame()
+    frame()
+  }
+  if (as.character(sppcode[4,1]) %in% c("PIRI", "PIVI2", "QUPR2")) { # use for DBH and biomass
+    plot(data_file, main=sppcode[4,1])
+    plot(valid_file, main=sppsciname[[1]])
     frame()
     frame()
   }
