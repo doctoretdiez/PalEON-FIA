@@ -5,6 +5,7 @@
 # Load necessary libraries
 library(rgdal)
 library(raster)
+library(MASS)
 
 
 
@@ -60,7 +61,7 @@ GETDF_FROMLIST <- function(DF_LIST, ITEM_LOC){
 
 #------------------Compare and Plot----------------------
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v2_density.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_v3_density.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
 nsims <- length(ras_list) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
@@ -80,6 +81,7 @@ for (i in 1:length(ras_list)){
     plot(resamplefia, main=sppcode[4,1])
     plot(valid_file, main=sppsciname[[1]])
     plot(comp.rast)
+    
     plot(resamplefia, valid_file)
     #hist(comp.rast, main=NULL, xlab=NULL, ylab=NULL)
   } else {
