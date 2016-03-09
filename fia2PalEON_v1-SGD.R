@@ -409,7 +409,7 @@ for(s in 1:length(spp.unique)){
 # Sys.sleep(300)
 # writeRaster(den.stack,filename="FIA_spp_density.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix=value)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/') #SGD ADDITION
-writeRaster(den.stack,filename="FIA_spp_density_maxit.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names') #SGD EDIT
+writeRaster(den.stack,filename="FIA_spp_density.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names') #SGD EDIT
 # den.stack <- NULL
 # Sys.sleep(300)
 #extract each species-level basal area response and extrapolate to the whole grid
