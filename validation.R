@@ -5,10 +5,14 @@
 # Load necessary libraries
 library(rgdal)
 library(raster)
-library(MASS)
 
-
-
+# Required functions
+GETDF_FROMLIST <- function(DF_LIST, ITEM_LOC){
+  DF_SELECTED <- DF_LIST[[ITEM_LOC]]
+  return(DF_SELECTED)
+}
+FIA_spp_dbh_PIRI.tif
+newin <- raster('FIA_spp_dbh_PIRI.tif')
 # ------------------Import Data Files-------------------
 # Import conversion csv
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/')
@@ -19,7 +23,7 @@ spptable <- read.csv("FIA_Rscript_imports/FIA_conversion-SGD_remove_dups.csv",he
 # Import only one parameter per run
 
 # Import basal area data
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BAS.STACK.RAST/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BAS.STACK.RAST.NOZERO/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/basal_area/')
@@ -27,7 +31,7 @@ valid_ras_list <- list.files(pattern='*.tif')
 valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Import biomass data
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BIO.STACK.RAST/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BIO.STACK.RAST.NOZERO/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/biomass/')
@@ -35,7 +39,7 @@ valid_ras_list <- list.files(pattern='*.tif')
 valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Import dbh data
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DBH.STACK.RAST/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DBH.STACK.RAST.NOZERO/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/diameter/')
@@ -43,29 +47,20 @@ valid_ras_list <- list.files(pattern='*.tif')
 valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Import density data
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DEN.STACK.RAST/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DEN.STACK.RAST.NOZERO/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/density/')
 valid_ras_list <- list.files(pattern='*.tif')
 valid_ras_files <- lapply(valid_ras_list, raster)
 
-
-
-
-
-GETDF_FROMLIST <- function(DF_LIST, ITEM_LOC){
-  DF_SELECTED <- DF_LIST[[ITEM_LOC]]
-  return(DF_SELECTED)
-}
-
 #------------------Compare and Plot----------------------
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v3_density.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_v3_dbh.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
 nsims <- length(ras_list) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
-for (i in 1:length(ras_list)){
+for (i in 34:length(ras_list)){
   data_file <- GETDF_FROMLIST(ras_files, i)
   sppcode <- data.frame(strsplit(names(ras_files[[i]]), split = "_", fixed=TRUE))
   sppsciname <- subset(spptable, acronym == as.character(sppcode[4,1]), select = scientific_name)
@@ -81,7 +76,7 @@ for (i in 1:length(ras_list)){
     plot(resamplefia, main=sppcode[4,1])
     plot(valid_file, main=sppsciname[[1]])
     plot(comp.rast)
-    
+    # limits for each parameter: BAS
     plot(resamplefia, valid_file)
     #hist(comp.rast, main=NULL, xlab=NULL, ylab=NULL)
   } else {
