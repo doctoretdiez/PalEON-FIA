@@ -370,11 +370,11 @@ for(s in 1:length(spp.unique)){
                            y=spp.albers$y[which(spp.albers$spcd==spp.unique[s])],
                            density=spp.albers$density[which(spp.albers$spcd==spp.unique[s])]))
     
-    #fill plots with no spp present as zero
-    empty.pts <- pts.albers[!(pts.albers %in% coordinates(den.raw[[s]][,1:2]))]
-    zero.pts  <- cbind(empty.pts[1:(length(empty.pts)/2)],empty.pts[(length(empty.pts)/2+1):length(empty.pts)]) #dumb way
-    zero.thin <- zero.pts[seq(1,nrow(zero.pts),by=25),] #thin these or the spline will take forever and crash
-    den.raw[[s]]  <- rbind(den.raw[[s]],cbind(zero.thin,rep(0,length=nrow(zero.thin)))) #add in plots with no spp
+#     #fill plots with no spp present as zero
+#     empty.pts <- pts.albers[!(pts.albers %in% coordinates(den.raw[[s]][,1:2]))]
+#     zero.pts  <- cbind(empty.pts[1:(length(empty.pts)/2)],empty.pts[(length(empty.pts)/2+1):length(empty.pts)]) #dumb way
+#     zero.thin <- zero.pts[seq(1,nrow(zero.pts),by=25),] #thin these or the spline will take forever and crash
+#     den.raw[[s]]  <- rbind(den.raw[[s]],cbind(zero.thin,rep(0,length=nrow(zero.thin)))) #add in plots with no spp
     
 #     tps <- Tps(den.raw[[s]][,1:2], den.raw[[s]][,3]) #thin plate spline fit
 #     den.grid[[s]] <- interpolate(base.rast, tps)     #interpolate spline to new grid
@@ -425,11 +425,11 @@ for(s in 1:length(spp.unique)){
                            y=spp.albers$y[which(spp.albers$spcd==spp.unique[s])],
                            basalarea=spp.albers$basalarea[which(spp.albers$spcd==spp.unique[s])]))
     
-    #fill plots with no spp present as zero
-    empty.pts <- pts.albers[!(pts.albers %in% coordinates(bas.raw[[s]][,1:2]))]
-    zero.pts  <- cbind(empty.pts[1:(length(empty.pts)/2)],empty.pts[(length(empty.pts)/2+1):length(empty.pts)]) #dumb way
-    zero.thin <- zero.pts[seq(1,nrow(zero.pts),by=25),] #thin these or the spline will take forever and crash
-    bas.raw[[s]]  <- rbind(bas.raw[[s]],cbind(zero.thin,rep(0,length=nrow(zero.thin)))) #add in plots with no spp
+#     #fill plots with no spp present as zero
+#     empty.pts <- pts.albers[!(pts.albers %in% coordinates(bas.raw[[s]][,1:2]))]
+#     zero.pts  <- cbind(empty.pts[1:(length(empty.pts)/2)],empty.pts[(length(empty.pts)/2+1):length(empty.pts)]) #dumb way
+#     zero.thin <- zero.pts[seq(1,nrow(zero.pts),by=25),] #thin these or the spline will take forever and crash
+#     bas.raw[[s]]  <- rbind(bas.raw[[s]],cbind(zero.thin,rep(0,length=nrow(zero.thin)))) #add in plots with no spp
     
 #     tps <- Tps(bas.raw[[s]][,1:2], bas.raw[[s]][,3]) #thin plate spline fit
 #     bas.grid[[s]] <- interpolate(base.rast, tps)     #interpolate spline to new grid
@@ -483,11 +483,11 @@ for(s in 1:length(spp.unique)){
                            y=spp.albers$y[which(spp.albers$spcd==spp.unique[s])],
                            biomass=spp.albers$biomass[which(spp.albers$spcd==spp.unique[s])]))
     
-    #fill plots with no spp present as zero
-    empty.pts <- pts.albers[!(pts.albers %in% coordinates(bio.raw[[s]][,1:2]))]
-    zero.pts  <- cbind(empty.pts[1:(length(empty.pts)/2)],empty.pts[(length(empty.pts)/2+1):length(empty.pts)]) #dumb way
-    zero.thin <- zero.pts[seq(1,nrow(zero.pts),by=25),] #thin these or the spline will take forever and crash
-    bio.raw[[s]]  <- rbind(bio.raw[[s]],cbind(zero.thin,rep(0,length=nrow(zero.thin)))) #add in plots with no spp
+#     #fill plots with no spp present as zero
+#     empty.pts <- pts.albers[!(pts.albers %in% coordinates(bio.raw[[s]][,1:2]))]
+#     zero.pts  <- cbind(empty.pts[1:(length(empty.pts)/2)],empty.pts[(length(empty.pts)/2+1):length(empty.pts)]) #dumb way
+#     zero.thin <- zero.pts[seq(1,nrow(zero.pts),by=25),] #thin these or the spline will take forever and crash
+#     bio.raw[[s]]  <- rbind(bio.raw[[s]],cbind(zero.thin,rep(0,length=nrow(zero.thin)))) #add in plots with no spp
     
 #     tps <- Tps(bio.raw[[s]][,1:2], bio.raw[[s]][,3]) #thin plate spline fit
 #     bio.grid[[s]] <- interpolate(base.rast, tps)     #interpolate spline to new grid
