@@ -6,7 +6,11 @@
 library(rgdal)
 library(raster)
 
-
+# Required functions
+GETDF_FROMLIST <- function(DF_LIST, ITEM_LOC){
+  DF_SELECTED <- DF_LIST[[ITEM_LOC]]
+  return(DF_SELECTED)
+}
 
 # ------------------Import Data Files-------------------
 # Import conversion csv
@@ -18,7 +22,7 @@ spptable <- read.csv("FIA_Rscript_imports/FIA_conversion-SGD_remove_dups.csv",he
 # Import only one parameter per run
 
 # Import basal area data
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BAS.STACK.RAST/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BAS.STACK.RAST.NOZERO/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/basal_area/')
@@ -26,7 +30,7 @@ valid_ras_list <- list.files(pattern='*.tif')
 valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Import biomass data
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BIO.STACK.RAST/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BIO.STACK.RAST.NOZERO/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/biomass/')
@@ -34,7 +38,7 @@ valid_ras_list <- list.files(pattern='*.tif')
 valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Import dbh data
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DBH.STACK.RAST/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DBH.STACK.RAST.NOZERO/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/diameter/')
@@ -42,25 +46,16 @@ valid_ras_list <- list.files(pattern='*.tif')
 valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Import density data
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DEN.STACK.RAST/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DEN.STACK.RAST.NOZERO/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/density/')
 valid_ras_list <- list.files(pattern='*.tif')
 valid_ras_files <- lapply(valid_ras_list, raster)
 
-
-
-
-
-GETDF_FROMLIST <- function(DF_LIST, ITEM_LOC){
-  DF_SELECTED <- DF_LIST[[ITEM_LOC]]
-  return(DF_SELECTED)
-}
-
 #------------------Compare and Plot----------------------
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v2_density.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_v3_biomass.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
 nsims <- length(ras_list) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
@@ -71,7 +66,9 @@ for (i in 1:length(ras_list)){
   if (length(sppsciname)>1){stop(paste(sppcode[4,1], sppsciname[[1]], "Error, i=", i, sep=" "))}
   valid_data_number <- which(grepl(sppsciname[[1]], valid_ras_list))
   if (length(valid_data_number)>1){stop(paste(sppcode[4,1], sppsciname[[1]], "Error, i=", i, sep=" "))}
-  if (length(valid_data_number)==1){
+  # if (length(valid_data_number)==1 && !(as.character(sppcode[4,1]) %in% c("PIRI", "PIVI2", "QUPR2"))){ # use for DBH
+  if (length(valid_data_number)==1 && !(as.character(sppcode[4,1]) %in% c("BELE", "PIRI", "PIRU", "PIVI2", "QUIM", "QUPR2"))){ # use for biomass
+  # if (length(valid_data_number)==1){ # use for basal area and density
     valid_file <- GETDF_FROMLIST(valid_ras_files, valid_data_number)
     resamplefia <- resample(data_file, valid_file)
     comp.rast <- resamplefia-valid_file
@@ -80,11 +77,24 @@ for (i in 1:length(ras_list)){
     plot(resamplefia, main=sppcode[4,1])
     plot(valid_file, main=sppsciname[[1]])
     plot(comp.rast)
+    # Ranges for each parameter (SELECT ONE) 
+    # myrange <- c(20,140) #DBH
+#     myrange <- c(0,3000) #Density
+#     plot(resamplefia, valid_file, xlim=myrange, ylim=myrange)
     plot(resamplefia, valid_file)
+    abline(0,1,col="red",lwd=1,lty=3)
     #hist(comp.rast, main=NULL, xlab=NULL, ylab=NULL)
-  } else {
+  } 
+  if (length(valid_data_number)!=1) {
     plot(data_file, main=sppcode[4,1])
     frame()
+    frame()
+    frame()
+  }
+#   if (as.character(sppcode[4,1]) %in% c("PIRI", "PIVI2", "QUPR2")) { # use for DBH
+  if (as.character(sppcode[4,1]) %in% c("BELE", "PIRI", "PIRU", "PIVI2", "QUIM", "QUPR2")) { # use for biomass
+    plot(data_file, main=sppcode[4,1])
+    plot(valid_file, main=sppsciname[[1]])
     frame()
     frame()
   }
