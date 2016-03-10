@@ -66,8 +66,9 @@ for (i in 1:length(ras_list)){
   if (length(sppsciname)>1){stop(paste(sppcode[4,1], sppsciname[[1]], "Error, i=", i, sep=" "))}
   valid_data_number <- which(grepl(sppsciname[[1]], valid_ras_list))
   if (length(valid_data_number)>1){stop(paste(sppcode[4,1], sppsciname[[1]], "Error, i=", i, sep=" "))}
-  if (length(valid_data_number)==1 && !(as.character(sppcode[4,1]) %in% c("PIRI", "PIVI2", "QUPR2"))){ # use for DBH and biomass
-  # if (length(valid_data_number)==1){
+  # if (length(valid_data_number)==1 && !(as.character(sppcode[4,1]) %in% c("PIRI", "PIVI2", "QUPR2"))){ # use for DBH
+  if (length(valid_data_number)==1 && !(as.character(sppcode[4,1]) %in% c("BELE", "PIRI", "PIRU", "PIVI2", "QUIM", "QUPR2"))){ # use for biomass
+  # if (length(valid_data_number)==1){ # use for basal area and density
     valid_file <- GETDF_FROMLIST(valid_ras_files, valid_data_number)
     resamplefia <- resample(data_file, valid_file)
     comp.rast <- resamplefia-valid_file
@@ -90,7 +91,8 @@ for (i in 1:length(ras_list)){
     frame()
     frame()
   }
-  if (as.character(sppcode[4,1]) %in% c("PIRI", "PIVI2", "QUPR2")) { # use for DBH and biomass
+#   if (as.character(sppcode[4,1]) %in% c("PIRI", "PIVI2", "QUPR2")) { # use for DBH
+  if (as.character(sppcode[4,1]) %in% c("BELE", "PIRI", "PIRU", "PIVI2", "QUIM", "QUPR2")) { # use for biomass
     plot(data_file, main=sppcode[4,1])
     plot(valid_file, main=sppsciname[[1]])
     frame()
