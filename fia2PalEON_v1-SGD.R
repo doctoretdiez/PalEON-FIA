@@ -213,6 +213,7 @@ row.names(surv.current) <- NULL
 
 ####CALCULATE SPP-LEVEL VARIABLES####
 #1. Loop over unique plots and aggregate unique species responses
+avg.list <- list()
 uniq.pts <- surv.current[!duplicated(surv.current[,c("lat","lon")]),6:7]
 nsims <- nrow(uniq.pts) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
@@ -233,25 +234,28 @@ for(p in 1:nrow(uniq.pts)){
   spp.tpa  <- tapply(dat.tmp[,12], dat.tmp[,11], mean)
   
   spp.uncorr <- ddply(dat.tmp, .(dat.tmp$spcd, dat.tmp$tpa_unadj), nrow)[,3]
-  spp.cnt    <- ddply(dat.tmp, .(dat.tmp$spcd, dat.tmp$tpa_unadj), nrow)[,3] * ddply(dat.tmp, .(dat.tmp$spcd, dat.tmp$tpa_unadj), nrow)[,2]
+  spp.cnt    <- ddply(dat.tmp, .(dat.tmp$spcd, dat.tmp$tpa_unadj), nrow)[,3] * ddply(dat.tmp, .(dat.tmp$spcd, dat.tmp$tpa_unadj), nrow)[,2] * (1/ac2ha)
   
 #   spp.bio <- tapply(apply(dat.tmp[,13:16],1,sum),dat.tmp[,11],sum) * (1/spp.tpa) * 453.592*10^-6 * (1/ac2ha) #biomass = lbs/ac to Mg/ha
-    spp.bio <- tapply(apply(dat.tmp[,13:15],1,sum),dat.tmp[,11],sum) * (1/spp.tpa) * 453.592*10^-6 * (1/ac2ha) #biomass = lbs/ac to Mg/ha #SGD EDIT
+    spp.bio <- tapply(apply(dat.tmp[,13:15],1,sum),dat.tmp[,11],sum) * (spp.tpa) * 453.592*10^-6 * (1/ac2ha) #biomass = lbs/ac to Mg/ha #SGD EDIT
   
-  spp.bas  <- tapply(pi*(dat.tmp[,9]/100/2)^2, dat.tmp[,11], sum) * (1/spp.tpa) #basal area = m2/ha
+  spp.bas  <- tapply(pi*(dat.tmp[,9]/100/2)^2, dat.tmp[,11], sum) * (spp.tpa) * (1/ac2ha) #basal area = m2/ha
     
   avg.plot <- cbind(statecd=sta.tmp,lon=lon.tmp,lat=lat.tmp,spcd=spp.tmp,count_uncorr=spp.uncorr,
                     dbh=dbh.avg,density=spp.cnt,basalarea=spp.bas,biomass=spp.bio)
   
-  #store data
-  if(p==1){
-    all.avg <- avg.plot
-  } else{
-    all.avg <- rbind(all.avg,avg.plot)
-  }
+  avg.list[[p]] <- avg.plot
+  
+#   #store data
+#   if(p==1){
+#     all.avg <- avg.plot
+#   } else{
+#     all.avg <- rbind(all.avg,avg.plot)
+#   }
   setTxtProgressBar(pb, p) #SGD ADDITION
 }
 
+all.avg <- do.call("rbind",avg.list)
 
 #####-----------SPATIAL CONVERSIONS OF DATASET------------#####
 #1. Convert from FIA lon,lat to the Albers projection
@@ -291,9 +295,11 @@ gridymax <- 1493000 #max(spp.albers$y)
 #                     ymn = gridymin, ymx = gridymax, nrows=178,
 #                     crs = "+init=epsg:3175")
 #SGD Edit: use 'resolution' as ncol/nrow gave incorrect res
-base.rast <- raster(xmn = gridxmin, xmx = gridxmax, 
-                    ymn = gridymin, ymx = gridymax, resolution = c(8000,8000),
-                    crs = "+init=epsg:3175")
+# base.rast <- raster(xmn = gridxmin, xmx = gridxmax, 
+#                     ymn = gridymin, ymx = gridymax, resolution = c(8000,8000),
+#                     crs = "+init=epsg:3175")
+
+base.rast <- raster('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/basal_area/Abies_balsamea_basal_alb.tif')
 
 xo <- seq(gridxmin,gridxmax-1,by=8000)
 yo <- seq(gridymin,gridymax-1,by=8000)
