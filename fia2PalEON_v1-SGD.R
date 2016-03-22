@@ -211,6 +211,10 @@ surv.current <- surv.current[complete.cases(surv.current),]
 surv.current[1:10,] #print first 10 lines to make sure stuff looks OK
 row.names(surv.current) <- NULL 
 
+# Remove expns column data (while maintining same column numbers), and remove duplicates
+surv.current$expns <- NA
+surv.current <- unique(surv.current)
+
 ####CALCULATE SPP-LEVEL VARIABLES####
 #1. Loop over unique plots and aggregate unique species responses
 avg.list <- list()
