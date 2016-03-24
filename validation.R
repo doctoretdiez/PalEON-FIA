@@ -20,7 +20,7 @@ spptable <- read.csv("FIA_Rscript_imports/FIA_conversion-SGD_remove_dups.csv",he
 
 # Import Raster Files and Run validation
 # ----------------------Basal area data-----------------------
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BAS.STACK.RAST.NOZERO.SRRAST.NEWEQN/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BAS.STACK.MW/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/basal_area/')
@@ -29,7 +29,7 @@ valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Compare and Plot
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v5_basal_area.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_mw_basal_area.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
 par(oma=c(0,0,2,0))
 nsims <- length(ras_list) #SGD ADDITION
@@ -73,7 +73,7 @@ mtext("Sydne vs. FIA", side=3, line=0.5, adj=0.93, outer=TRUE)
 dev.off()
 
 # ------------------------Biomass data---------------------------
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BIO.STACK.RAST.NOZERO.SRRAST.NEWEQN/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/BIO.STACK.MW/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/biomass/')
@@ -82,8 +82,9 @@ valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Compare and Plot
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v5_biomass.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_mw_biomass.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
+par(oma=c(0,0,2,0))
 nsims <- length(ras_list) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
 for (i in 1:length(ras_list)){
@@ -129,7 +130,7 @@ mtext("Sydne vs. FIA", side=3, line=0.5, adj=0.93, outer=TRUE)
 dev.off()
 
 # --------------------------DBH data---------------------------
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DBH.STACK.RAST.NOZERO.SRRAST.NEWEQN/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DBH.STACK.MW/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/diameter/')
@@ -138,8 +139,9 @@ valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Compare and Plot
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v5_dbh.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_mw_dbh.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
+par(oma=c(0,0,2,0))
 nsims <- length(ras_list) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
 for (i in 1:length(ras_list)){
@@ -185,7 +187,7 @@ mtext("Sydne vs. FIA", side=3, line=0.5, adj=0.93, outer=TRUE)
 dev.off()
 
 # ------------------------Density data---------------------------
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DEN.STACK.RAST.NOZERO.SRRAST.NEWEQN/')
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/DEN.STACK.MW/')
 ras_list <- list.files(pattern='*.tif')
 ras_files <- lapply(ras_list, raster)
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/albers/density/')
@@ -194,8 +196,9 @@ valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Compare and Plot
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v5_density.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_mw_density.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
+par(oma=c(0,0,2,0))
 nsims <- length(ras_list) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
 for (i in 1:length(ras_list)){
