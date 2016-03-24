@@ -206,7 +206,7 @@ surv.current <- surv.current[,1:15]                                           # 
 # surv.current <- surv.current[complete.cases(surv.current),]
 
 surv.current <- surv.current[surv.current$statuscd==1,]                      #live trees only
-surv.current <- surv.current[surv.current$dbh>20.32,]                        #only trees >8 inches
+surv.current <- surv.current[surv.current$dbh>=20.32,]                        #only trees >8 inches
 surv.current <- surv.current[complete.cases(surv.current),]
 surv.current[1:10,] #print first 10 lines to make sure stuff looks OK
 row.names(surv.current) <- NULL 
@@ -214,7 +214,8 @@ row.names(surv.current) <- NULL
 # Remove expns column data (while maintining same column numbers), and remove duplicates
 surv.current$expns <- NA
 surv.current <- unique(surv.current)
-
+write.table(surv.current, file="CodeOutput/surv.current_no_expns.csv",
+            row.names=FALSE, sep=",", quote=F)
 ####CALCULATE SPP-LEVEL VARIABLES####
 #1. Loop over unique plots and aggregate unique species responses
 avg.list <- list()

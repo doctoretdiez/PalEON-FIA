@@ -29,8 +29,9 @@ valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Compare and Plot
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v4_basal_area.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_v5_basal_area.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
+par(oma=c(0,0,2,0))
 nsims <- length(ras_list) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
 for (i in 1:length(ras_list)){
@@ -49,7 +50,9 @@ for (i in 1:length(ras_list)){
     plot(resamplefia, main=sppcode[4,1])
     plot(valid_file, main=sppsciname[[1]])
     plot(comp.rast)
-    plot(resamplefia, valid_file)
+    myrange <- c(0,59) #Density
+    plot(resamplefia, valid_file, xlim=myrange, ylim=myrange)
+    # plot(resamplefia, valid_file)
     abline(0,1,col="red",lwd=1,lty=3)
     #hist(comp.rast, main=NULL, xlab=NULL, ylab=NULL)
   } 
@@ -62,6 +65,11 @@ for (i in 1:length(ras_list)){
 
   setTxtProgressBar(pb, i)
 }
+mtext("FIA", side=3, line=0.5, adj=0.120, outer=TRUE)
+mtext("Sydne", side=3, line=0.5, adj=0.370, outer=TRUE)
+mtext("FIA-Sydne", side=3, line=0.5, adj=0.65, outer=TRUE)
+mtext("Sydne vs. FIA", side=3, line=0.5, adj=0.93, outer=TRUE)
+
 dev.off()
 
 # ------------------------Biomass data---------------------------
@@ -74,7 +82,7 @@ valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Compare and Plot
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v4_biomass.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_v5_biomass.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
 nsims <- length(ras_list) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
@@ -94,7 +102,9 @@ for (i in 1:length(ras_list)){
     plot(resamplefia, main=sppcode[4,1])
     plot(valid_file/1000, main=sppsciname[[1]])
     plot(comp.rast)
-    plot(resamplefia, valid_file/1000)
+    myrange <- c(0,350) #Density
+    plot(resamplefia, valid_file/1000, xlim=myrange, ylim=myrange)
+    # plot(resamplefia, valid_file/1000)
     abline(0,1,col="red",lwd=1,lty=3)
     #hist(comp.rast, main=NULL, xlab=NULL, ylab=NULL)
   } 
@@ -106,12 +116,16 @@ for (i in 1:length(ras_list)){
   }
   if (as.character(sppcode[4,1]) %in% c("BELE", "PIRI", "PIRU", "PIVI2", "QUIM", "QUPR2")) {
     plot(data_file, main=sppcode[4,1])
-    plot(valid_file, main=sppsciname[[1]])
+    plot(valid_file/1000, main=sppsciname[[1]])
     frame()
     frame()
   }
   setTxtProgressBar(pb, i)
 }
+mtext("FIA", side=3, line=0.5, adj=0.120, outer=TRUE)
+mtext("Sydne", side=3, line=0.5, adj=0.370, outer=TRUE)
+mtext("FIA-Sydne", side=3, line=0.5, adj=0.65, outer=TRUE)
+mtext("Sydne vs. FIA", side=3, line=0.5, adj=0.93, outer=TRUE)
 dev.off()
 
 # --------------------------DBH data---------------------------
@@ -124,7 +138,7 @@ valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Compare and Plot
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v4_dbh.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_v5_dbh.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
 nsims <- length(ras_list) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
@@ -145,8 +159,8 @@ for (i in 1:length(ras_list)){
     plot(valid_file, main=sppsciname[[1]])
     plot(comp.rast)
     myrange <- c(20,140) #DBH
-    plot(resamplefia, valid_file, xlim=myrange, ylim=myrange)
-    # plot(resamplefia, valid_file)
+    # plot(resamplefia, valid_file, xlim=myrange, ylim=myrange)
+    plot(resamplefia, valid_file)
     abline(0,1,col="red",lwd=1,lty=3)
     #hist(comp.rast, main=NULL, xlab=NULL, ylab=NULL)
   } 
@@ -164,6 +178,10 @@ for (i in 1:length(ras_list)){
   }
   setTxtProgressBar(pb, i)
 }
+mtext("FIA", side=3, line=0.5, adj=0.120, outer=TRUE)
+mtext("Sydne", side=3, line=0.5, adj=0.370, outer=TRUE)
+mtext("FIA-Sydne", side=3, line=0.5, adj=0.65, outer=TRUE)
+mtext("Sydne vs. FIA", side=3, line=0.5, adj=0.93, outer=TRUE)
 dev.off()
 
 # ------------------------Density data---------------------------
@@ -176,7 +194,7 @@ valid_ras_files <- lapply(valid_ras_list, raster)
 
 # Compare and Plot
 setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/Figures/')
-pdf('FIA_Sydne_Validation_v4_density.pdf', width=8.5, height=120)
+pdf('FIA_Sydne_Validation_v5_density.pdf', width=8.5, height=120)
 par(mfrow=c(length(ras_list), 4))
 nsims <- length(ras_list) #SGD ADDITION
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) #SGD ADDITION
@@ -196,9 +214,9 @@ for (i in 1:length(ras_list)){
     plot(resamplefia, main=sppcode[4,1])
     plot(valid_file, main=sppsciname[[1]])
     plot(comp.rast)
-    myrange <- c(0,3000) #Density
-    plot(resamplefia, valid_file, xlim=myrange, ylim=myrange)
-    # plot(resamplefia, valid_file)
+    myrange <- c(0,700) #Density
+    # plot(resamplefia, valid_file, xlim=myrange, ylim=myrange)
+    plot(resamplefia, valid_file)
     abline(0,1,col="red",lwd=1,lty=3)
     #hist(comp.rast, main=NULL, xlab=NULL, ylab=NULL)
   } 
@@ -210,4 +228,8 @@ for (i in 1:length(ras_list)){
   }
   setTxtProgressBar(pb, i)
 }
+mtext("FIA", side=3, line=0.5, adj=0.120, outer=TRUE)
+mtext("Sydne", side=3, line=0.5, adj=0.370, outer=TRUE)
+mtext("FIA-Sydne", side=3, line=0.5, adj=0.65, outer=TRUE)
+mtext("Sydne vs. FIA", side=3, line=0.5, adj=0.93, outer=TRUE)
 dev.off()
