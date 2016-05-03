@@ -15,11 +15,11 @@ library(RPostgreSQL)
 library(raster)
 
 #Import tree names and codes
-setwd("C:/Users/sgdubois/Dropbox/FIA_work/FIA_Rscript_imports/")
-spp.codes <- read.csv('FIA_conversion-SGD_remove_dups.csv', header=TRUE)
+setwd("C:/Users/Sean/Dropbox/FIA_work/FIA_Rscript_imports/")
+spp.codes <- read.csv('FIA_conversion_v02-SGD.csv', header=TRUE)
 spp.codes.paleon <- spp.codes[,c('spcd', 'PalEON')]
 spp.codes.paleon_nodups <- spp.codes.paleon[-which(duplicated(spp.codes.paleon$spcd)),]
-tree.spp <- read.csv("plss.pft.conversion_v0.1-1.csv", header=TRUE)
+tree.spp <- read.csv("plss.pft.conversion-SGD.csv", header=TRUE)
 
 # Conversion factors
 ac2ha   <- 0.404686   #conversion from 1 acre to hectares
