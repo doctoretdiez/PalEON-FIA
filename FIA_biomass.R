@@ -13,9 +13,12 @@ options(scipen = 999)
 library(plyr)
 library(RPostgreSQL)
 library(raster)
+# library(devtools)
+# install_github("PecanProject/pecan", subdir = "modules/allometry")
+library(PEcAn.allometry)
 
 #Import tree names and codes
-setwd("C:/Users/Sean/Dropbox/FIA_work/FIA_Rscript_imports/")
+setwd("C:/Users/sgdubois/Dropbox/FIA_work/FIA_Rscript_imports/")
 spp.codes <- read.csv('FIA_conversion_v02-SGD.csv', header=TRUE)
 spp.codes.paleon <- spp.codes[,c('spcd', 'PalEON')]
 spp.codes.paleon_nodups <- spp.codes.paleon[-which(duplicated(spp.codes.paleon$spcd)),]
@@ -84,7 +87,7 @@ con <- dbConnect(drv,dbname='postgres', user='postgres')
 # surv.current.out$lon <- NULL
 # surv.current.out$lat <- NULL
 # write.csv(surv.current.out, 'data/surv.current.out.treecn.nolatlon.csv', row.names = FALSE)
-setwd("C:/Users/Sean/Dropbox/FIA_work/CodeOutput/data/")
+setwd("C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/data/")
 surv.current <- read.csv('surv.current.out.treecn.nolatlon.csv', header=TRUE)
 # -----------------Calculate Jenkins biomass----------------
 tree_data <- surv.current
@@ -92,6 +95,7 @@ tree_data2 <- merge(tree_data, spp.codes.paleon_nodups, by="spcd")
 tree_data3 <- merge(tree_data2, tree.spp, by.x="PalEON", by.y="PLSS")
 
 plt_cn <- unique(as.character(tree_data3$plt_cn))
+spcd_unique <- unique(tree_data3$spcd)
 
 calcbiomass <- function(beta1, beta2, dia, tpa){
   bm <- (exp(beta1 + beta2 * log(dia)))*tpa
@@ -104,9 +108,37 @@ tree_data3$Jenkins_Biomass <- calcbiomass(tree_data3$biomass_b1, tree_data3$biom
 tree_data3$FIA_total_biomass <- rowSums(tree_data3[,c('drybio_bole', 'drybio_top', 'drybio_stump')]) * 453.592*10^-6 * 6.018046 * (1/ac2ha)
 
 # ---------------Calculate PEcAn allometry------------------
-# library(devtools)
-# install_github("PecanProject/pecan", subdir = "modules/allometry")
-library(PEcAn.allometry)
+# Create spp.codes table with only used spcd
+spp.codes.current <- spp.codes[spp.codes$spcd %in% spcd_unique,]
+# Remove pfts not found in Allom project
+spp.codes.current <- spp.codes.current[-which((spp.codes.current$pft %in% c("Hydric", "UNK", "Evergreen"))),]
+
+# Add pft column to FIA data
+tree_data3$PFT <- NULL
+spcd.pft <- spp.codes.current[,c('spcd', 'pft')]
+tree_data4 <- merge(tree_data3, spcd.pft, by="spcd")
+
+# Create list of PFTs with spcd and acronym
+mypfts <- as.character(unique(spp.codes.current$pft))
+pfts <- list()
+for(i in 1:length(mypfts)){
+  pfts[[i]] <- spp.codes.current[spp.codes.current$pft==mypfts[i],c('acronym', 'spcd')]
+}
+names(pfts) <- mypfts
+
+setwd("C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/PEcAn_allom_500/")
+mindbh <- floor(min(tree_data4$dbh))
+maxdbh <- ceiling(max(tree_data4$dbh))
+allom.stats = AllomAve(pfts,ngibbs=500, components = 2, dmin=mindbh, dmax=maxdbh)
+allom.fit = load.allom(getwd())
+# Line below requires too much memory, need to run by pft
+# pred <- allom.predict(allom.fit, dbh=tree_data5$dbh, pft=tree_data5$pft)
+pred.out <- list()
+for(i in 1:length(mypfts)){
+  dbh.tmp <- tree_data4$dbh[tree_data4$pft==mypfts[i]]
+  pred <- allom.predict(allom.fit, dbh=dbh.tmp, pft=mypfts[i])
+  conf <- allom.predict(allom.fit, dbh=dbh.tmp[1], pft=mypfts[i], interval = "confidence")
+}
 # --------------Calculate plot level biomass estimates--------
 # species_plot <- unique(tree_data3[,c("plt_cn", "spcd")])
 # species_plot$extra <- NA
@@ -119,10 +151,11 @@ abline(0,1,col="red")
 
 species_plot_bio <- join_all(list(species_FIA_bio, species_Jenkins_bio))
 
+setwd("C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/data/")
 write.table(species_plot_bio, 'species_plot_bio.csv', row.names=FALSE, col.names=TRUE, sep=",", quote=F)
-
+species_plot_bio <- read.csv('species_plot_bio.csv', header=TRUE)
 # ---------------------Rasterize biomass---------------------
-plt_cn <- read.csv('C:/Users/Sean/Desktop/plt_cn_values.csv')
+plt_cn <- read.csv('C:/Users/sgdubois/Desktop/plt_cn_values.csv')
 plt_cn$STATECD <- NULL
   # SPATIAL CONVERSIONS OF DATASET
 # Convert from FIA lon,lat to the Albers projection
@@ -154,8 +187,8 @@ bio.rast.fia <- list()
 nsims <- length(spp.unique) 
 pb <- txtProgressBar(min = 1, max = nsims, style = 3) 
 for(s in 1:length(spp.unique)){
-  if(length(spp.albers$x[which(spp.albers$spcd==spp.unique[s])])>100){ #interpolate only if >10 sites have the spp
-    spp.name <- as.character(spp.codes$scientific_name[which(spp.codes$spcd==spp.unique[s])]) #get spp name
+  # if(length(spp.albers$x[which(spp.albers$spcd==spp.unique[s])])>100){ #interpolate only if >10 sites have the spp
+    spp.name <- unique(as.character(spp.codes$scientific_name[which(spp.codes$spcd==spp.unique[s])])) #get spp name
     # spp.name <- unique(as.character(spp.codes$acronym[which(spp.codes$spcd==spp.unique[s])])) #get spp code
     bio.raw <- spp.albers[which(spp.albers$spcd==spp.unique[s]),]
 #     bio.raw[[s]] <- (cbind(x=spp.albers$x[which(spp.albers$spcd==spp.unique[s])],
@@ -169,12 +202,12 @@ for(s in 1:length(spp.unique)){
     names(bio.rast.jenkins[[s]]) <- paste(spp.name) 
     bio.rast.fia[[s]] <- rasterize(bio.raw, base.rast, 'FIA_total_biomass', fun=mean)
     names(bio.rast.fia[[s]]) <- paste(spp.name) 
-   }
+   # }
   setTxtProgressBar(pb, s) 
 }
 bio.stack.jenkins <- do.call("stack", bio.rast.jenkins)
 bio.stack.fia <- do.call("stack", bio.rast.fia)
-setwd('C:/Users/Sean/Dropbox/FIA_work/CodeOutput/') 
+setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/') 
 writeRaster(bio.stack.fia,filename="FIA_spp_biomass_fia.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
 writeRaster(bio.stack.jenkins,filename="FIA_spp_biomass_jenkins.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
 
