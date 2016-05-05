@@ -11,7 +11,7 @@
 options(scipen = 999)
 # Install packages
 library(plyr)
-library(RPostgreSQL)
+# library(RPostgreSQL)
 library(raster)
 # library(devtools)
 # install_github("PecanProject/pecan", subdir = "modules/allometry")
@@ -131,14 +131,42 @@ mindbh <- floor(min(tree_data4$dbh))
 maxdbh <- ceiling(max(tree_data4$dbh))
 allom.stats = AllomAve(pfts,ngibbs=500, components = 2, dmin=mindbh, dmax=maxdbh)
 allom.fit = load.allom(getwd())
-# Line below requires too much memory, need to run by pft
-# pred <- allom.predict(allom.fit, dbh=tree_data5$dbh, pft=tree_data5$pft)
-pred.out <- list()
+# If line below requires too much memory, need to run by pft
+# pred <- allom.predict(allom.fit, dbh=tree_data4$dbh, pft=tree_data4$pft)
+# pred.out <- list()
+# conf.out <- list()
+
+for(i in 1:length(mypfts)){
+  tree_data.tmp <- tree_data4[tree_data4$pft==mypfts[i],]
+  assign(paste("tree_data4", mypfts[i], sep="_"), tree_data.tmp)
+}
+dbh.tmp <- sort(tree_data4_SMH$dbh)
+pred_SMH <- allom.predict(allom.fit, dbh=dbh.tmp, pft="SMH")
+conf_SMH <- allom.predict(allom.fit, dbh=dbh.tmp, pft="SMH", interval = "confidence")
+PI = apply(pred_SMH,2,quantile,c(0.025,0.5,0.975),na.rm=TRUE)
+CI = apply(conf_SMH,2,quantile,c(0.025,0.5,0.975),na.rm=TRUE)
+plot(dbh.tmp,CI[2,],type='l',lty=2,col="blue",ylim=range(PI),ylab="Biomass (kg)", xlab="DBH (cm)", main="SMH PFT")
+lines(dbh.tmp,CI[1,],lty=2,col="blue")
+lines(dbh.tmp,CI[3,],lty=2,col="blue")
+lines(dbh.tmp,PI[1,],lty=3,col="red")
+lines(dbh.tmp,PI[3,],lty=3,col="red")
+lines(dbh.tmp,PI[2,],lty=3,col="red")
+legend("topleft", legend = c("Prediction", "Confidence"), col = c("red", "blue"), lty = c(3,2))
+
 for(i in 1:length(mypfts)){
   dbh.tmp <- tree_data4$dbh[tree_data4$pft==mypfts[i]]
   pred <- allom.predict(allom.fit, dbh=dbh.tmp, pft=mypfts[i])
-  conf <- allom.predict(allom.fit, dbh=dbh.tmp[1], pft=mypfts[i], interval = "confidence")
+  conf <- allom.predict(allom.fit, dbh=dbh.tmp, pft=mypfts[i], interval = "confidence")
+  pred.out[[i]] <- pred
+  conf.out[[i]] <- conf
+
 }
+
+PI = apply(pred,2,quantile,c(0.025,0.5,0.975),na.rm=TRUE)
+plot(tree_data4$dbh,PI[2,],ylim=range(PI),ylab="Biomass (kg)")
+PEcAn_Biomass_med <- PI[2,] * 6.018046 * (1/(ac2ha*1000)) # units: Mg/ha
+tree_data4$PEcAn_Biomass_med <- PEcAn_Biomass_med
+
 # --------------Calculate plot level biomass estimates--------
 # species_plot <- unique(tree_data3[,c("plt_cn", "spcd")])
 # species_plot$extra <- NA
