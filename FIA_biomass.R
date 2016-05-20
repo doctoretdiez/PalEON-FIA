@@ -13,9 +13,11 @@ options(scipen = 999)
 library(plyr)
 # library(RPostgreSQL)
 library(raster)
-# library(devtools)
-# install_github("PecanProject/pecan", subdir = "modules/allometry")
-library(PEcAn.allometry)
+if(!require(PEcAn.allometry)){
+  library(devtools)
+  install_github("PecanProject/pecan", subdir = "modules/allometry")
+  require(PEcAn.allometry)
+}
 
 #Import tree names and codes
 setwd("C:/Users/sgdubois/Dropbox/FIA_work/FIA_Rscript_imports/")
@@ -87,8 +89,8 @@ con <- dbConnect(drv,dbname='postgres', user='postgres')
 # surv.current.out$lon <- NULL
 # surv.current.out$lat <- NULL
 # write.csv(surv.current.out, 'data/surv.current.out.treecn.nolatlon.csv', row.names = FALSE)
-setwd("C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/data/")
-surv.current <- read.csv('surv.current.out.treecn.nolatlon.csv', header=TRUE)
+setwd("C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/data/output")
+surv.current <- read.csv('full_fia_long.csv', header=TRUE)
 # -----------------Calculate Jenkins biomass----------------
 tree_data <- surv.current
 tree_data2 <- merge(tree_data, spp.codes.paleon_nodups, by="spcd")
