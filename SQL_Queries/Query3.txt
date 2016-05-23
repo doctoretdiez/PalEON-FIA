@@ -1,7 +1,0 @@
-CREATE TABLE fiaout.query3 AS
-	SELECT p.measyear as mytime, p.plot, p.cycle, p.subcycle, p.statecd, p.lon_actual_nad83 as lon, p.lat_actual_nad83 as lat, p.cn, t.dia, t.statuscd, t.spcd as spcd, t.tpa_unadj, t.drybio_bole, t.drybio_top, t.drybio_stump 
-	FROM fiaout.tree t, fiaout.plot_corrected p
-	WHERE p.cn=t.plt_cn;
-
-
-
