@@ -2,12 +2,7 @@
 #
 # Created by Sean G. DuBois 4/15/16 (sgdubs@gmail.com)
 
-# Query4:
-# CREATE TABLE fiaout_v2.query4 AS
-# SELECT p.measyear as mytime, p.plot, p.cycle, p.subcycle, p.statecd, p.lon_actual_nad83 as lon, p.lat_actual_nad83 as lat, p.cn as plt_cn, 
-# t.cn as tree_cn, t.dia, t.statuscd, t.spcd as spcd, t.tpa_unadj, t.drybio_bole, t.drybio_top, t.drybio_stump 
-# FROM fiaout_v2.tree t, fiaout_v2.plot_corrected p
-# WHERE p.cn=t.plt_cn;
+
 options(scipen = 999)
 # Install packages
 library(plyr)
@@ -29,66 +24,7 @@ tree.spp <- read.csv("plss.pft.conversion-SGD.csv", header=TRUE)
 # Conversion factors
 ac2ha   <- 0.404686   #conversion from 1 acre to hectares
 
-# ---------------Connect to SQL-----------------
-fia.database <- 'postgres'
-
-# create an PostgreSQL instance and create one connection.
-drv <- dbDriver("PostgreSQL")
-
-# open the connection using user, passsword, etc., as root user
-con <- dbConnect(drv,dbname='postgres', user='postgres')
-
-#constants
-# year    <- 2015       #find surveys closest to present year
-
-
-# --------------Import SQL data----------------
-
-# # Import data from SQL
-# query4 <- "SELECT * FROM fiaout_v2.query4"
-# 
-# css.query3 <- dbSendQuery(con, query4)
-# surv.all  <- fetch(css.query3, n = -1)
-# # Next line only works if all columns are imported as character, need to change to numeric
-# surv.all[] <- lapply(surv.all, function(x) as.numeric(x))
-# lapply(surv.all, class) #check
-# # Manage changes not made in PSQL
-# # These need to be in the correct column, as code occasionally calls by column not name
-# names(surv.all)[names(surv.all) == 'dia'] <- 'dbh'
-# surv.all$dbh <- surv.all$dbh*2.54 # SI Units conversion
-# names(surv.all)[names(surv.all) == 'mytime'] <- 'time'
-# 
-# #only select data from most current cycle, subcycle 
-# survey.states <- unique(surv.all$statecd)
-# surv.current  <- matrix()
-# # state.mat from fia2PalEON_v1-SGD.R
-# for(s in 1:length(survey.states)){
-#   state.code      <- survey.states[s]
-#   state.year      <- state.mat[which(state.mat[,1]==state.code),2]
-#   state.cycle     <- state.mat[which(state.mat[,1]==state.code),3]
-#   state.subcycle  <- state.mat[which(state.mat[,1]==state.code),4]
-#   
-#   if(s==1){
-#     surv.current    <- surv.all[which((surv.all$statecd==state.code) & (surv.all$time %in% state.year) & 
-#                                         (surv.all$subcycle %in% state.subcycle)),]
-#   } else{
-#     surv.tmp     <- surv.all[which((surv.all$statecd==state.code) & (surv.all$time %in% state.year) & 
-#                                      (surv.all$subcycle %in% state.subcycle)),]
-#     surv.current <- rbind(surv.current,surv.tmp)
-#   }  
-# }
-# 
-# # Do some more filtering 
-# surv.current <- surv.current[surv.current$statuscd==1,]                      #live trees only
-# surv.current <- surv.current[surv.current$dbh>=20.32,]                        #only trees with DBH greater than or equal to 8 inches
-# surv.current <- surv.current[complete.cases(surv.current),]
-# surv.current[1:10,] #print first 10 lines to make sure stuff looks OK
-# row.names(surv.current) <- NULL 
-# # Save surv.current without lat/lon
-# surv.current.out <- surv.current
-# surv.current.out$lon <- NULL
-# surv.current.out$lat <- NULL
-# write.csv(surv.current.out, 'data/surv.current.out.treecn.nolatlon.csv', row.names = FALSE)
+# Load FIA data. This can be the output from SQL_Query4.R or surv.current from fia2PalEON_v1-SGD.R
 setwd("C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/data/output")
 surv.current <- read.csv('full_fia_long.csv', header=TRUE)
 # -----------------Calculate Jenkins biomass----------------
@@ -246,24 +182,17 @@ bio.rast.fia <- list()
 bio.rast.pecan <- list()
 pb <- txtProgressBar(min = 1, max = length(spp.unique), style = 3) 
 for(s in 1:length(spp.unique)){
-  # if(length(spp.albers$x[which(spp.albers$spcd==spp.unique[s])])>100){ #interpolate only if >10 sites have the spp
     # spp.name <- unique(as.character(spp.codes$scientific_name[which(spp.codes$spcd==spp.unique[s])])) #get spp name
     spp.name <- unique(as.character(spp.codes$acronym[which(spp.codes$spcd==spp.unique[s])])) #get spp code
     bio.raw <- spp.albers[which(spp.albers$spcd==spp.unique[s]),]
-#     bio.raw[[s]] <- (cbind(x=spp.albers$x[which(spp.albers$spcd==spp.unique[s])],
-#                            y=spp.albers$y[which(spp.albers$spcd==spp.unique[s])],
-#                            biomass=spp.albers$FIA_total_biomass[which(spp.albers$spcd==spp.unique[s])]))
-#     
 
-#     p <- data.frame(x=bio.raw[[s]][,1],y=bio.raw[[s]][,2],bio=bio.raw[[s]][,3])
-#     coordinates(p)<- ~x+y
     bio.rast.jenkins[[s]] <- rasterize(bio.raw, base.rast, 'Jenkins_Biomass', fun=mean)
     names(bio.rast.jenkins[[s]]) <- paste(spp.name) 
     bio.rast.fia[[s]] <- rasterize(bio.raw, base.rast, 'FIA_total_biomass', fun=mean)
     names(bio.rast.fia[[s]]) <- paste(spp.name) 
     bio.rast.pecan[[s]] <- rasterize(bio.raw, base.rast, 'PEcAn_Biomass', fun=mean)
     names(bio.rast.pecan[[s]]) <- paste(spp.name) 
-   # }
+   
   setTxtProgressBar(pb, s) 
 }
 bio.stack.jenkins <- do.call("stack", bio.rast.jenkins)
