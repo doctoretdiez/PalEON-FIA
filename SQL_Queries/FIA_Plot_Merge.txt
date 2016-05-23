@@ -1,0 +1,3 @@
+CREATE TABLE fiaout.plot_corrected AS
+	SELECT * FROM fiaout.plot i , FIA.nrs_actual_coords_forested_plots g
+	WHERE i.cn = g.cnFIA;
