@@ -24,7 +24,8 @@ tree.spp <- read.csv("plss.pft.conversion-SGD.csv", header=TRUE)
 # Conversion factors
 ac2ha   <- 0.404686   #conversion from 1 acre to hectares
 
-# Load FIA data. This can be the output from SQL_Query4.R or surv.current from fia2PalEON_v1-SGD.R
+# Load FIA data. This can be the output from SQL_Query4.R, or source(Query4.R)
+# source('PalEON-FIA/SQL_Query4.R')
 setwd("C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/data/output")
 surv.current <- read.csv('full_fia_long.csv', header=TRUE)
 # -----------------Calculate Jenkins biomass----------------

@@ -32,20 +32,17 @@ options(scipen = 999)
 ##FYI, to clear MySQL result set
 #dbClearResult(dbListResults(con)[[1]])
 
-# fia.database <- 'fia5data'
-fia.database <- 'postgres' #SGD EDIT
+fia.database <- 'postgres' 
 
 #constants
 year    <- 2015       #find surveys closest to present year
 ac2ha   <- 0.404686   #conversion from 1 acre to hectares
 
-# create an MySQL instance and create one connection.
-# drv <- dbDriver("MySQL")
-drv <- dbDriver("PostgreSQL") #SGD EDIT
+# create a PostgreSQL instance and create one connection.
+drv <- dbDriver("PostgreSQL") 
 
 # open the connection using user, passsword, etc., as root user
-# con <- dbConnect(drv,dbname='fia5data',username='root') ,username='postgres'
-con <- dbConnect(drv,dbname='postgres', user='postgres') # SGD EDIT
+con <- dbConnect(drv,dbname='postgres', user='postgres')
 
 
 # -------------Query DB for all states and years---------------
@@ -57,8 +54,6 @@ class(state.surv$statecd) <- "numeric"
 class(state.surv$cycle) <- "numeric"
 class(state.surv$subcycle) <- "numeric"
 states <- sort(unique(state.surv$statecd))
-# states <- states[states < 72 & states != 56 & states !=35] #SGD comment out
-
 
 #NEW METHOD: Chooses the cycle and subcycle closest to the specified year 
 #in order to get a complete 5-year survey across all state plots
@@ -85,7 +80,7 @@ for(s in states){
     
     #get older chunk of 5-year survey to make complete set
     old.cycle    <- max.rep.cycle-1
-    s.m.c.s <- as.numeric(state.max.subcycle[s]) #SGD Addition, changed all state.max.subcycle[s] to s.m.c.s in next line
+    s.m.c.s <- as.numeric(state.max.subcycle[s]) 
     old.subcycle <- sort(seq(s.m.c.s,1,by=-1)[which(seq(s.m.c.s,1,by=-1)-max(max.subcycle)>0)])
     match.old.years <- state.surv$invyr[sel[which(state.surv$cycle[sel]==old.cycle&(state.surv$subcycle[sel] %in% old.subcycle))]]
     match.old.cycle <- state.surv$cycle[sel[which(state.surv$cycle[sel]==old.cycle&(state.surv$subcycle[sel] %in% old.subcycle))]]
@@ -140,39 +135,26 @@ state.mat <- state.mat[complete.cases(state.mat),]
 colnames(state.mat) <- c("statecd","time","cycle","subcycle")
 
 # ------------------QUERY 3-------------------
-#PalEON lon,lat bounds
-# lat     <- c(42,50)   #Simon's sett veg window
-# lon     <- c(-98,-82) #Simon's sett veg window
-# 
-# lonmin <- min(lon)
-# lonmax <- max(lon)
-# latmin <- min(lat)
-# latmax <- max(lat)
+# Query3 code for SQL:
+# CREATE TABLE fiaout.query3 AS
+# SELECT p.measyear as mytime, p.plot, p.cycle, p.subcycle, p.statecd, p.lon_actual_nad83 as lon, p.lat_actual_nad83 as lat, p.cn, t.dia, t.statuscd, t.spcd as spcd, t.tpa_unadj, t.drybio_bole, t.drybio_top, t.drybio_stump 
+# FROM fiaout.tree t, fiaout.plot_corrected p
+# WHERE p.cn=t.plt_cn;
 
-#select year, plot, cycle, subcycle, statecd, lon, lat, expns, dia=dbh, statuscd, spcd, tpa_unadj, biomass: bole, top, stump, sapling, woodland, roots
-# query3 <- paste("SELECT p.measyear as time,p.plot,p.cycle,p.subcycle,p.statecd,p.lon,p.lat,psm.expns,t.dia*2.54 as dbh, t.statuscd,t.spcd as spcd, t.tpa_unadj, t.drybio_bole, t.drybio_top, t.drybio_stump, t.drybio_sapling, t.drybio_wdld_spp, t.drybio_bg FROM TREE t, PLOT p, POP_PLOT_STRATUM_ASSGN ppsa, POP_STRATUM psm WHERE p.cn=t.plt_cn AND ppsa.plt_cn = p.cn AND ppsa.stratum_cn = psm.cn AND p.lon >= ",
-#                 lonmin," AND p.lon < ",lonmax,
-#                 " AND p.lat >= ",latmin," AND p.lat < ",latmax,sep='')
-
-# SGD EDIT: Below query updated to work with PSQL, no lat/lon bounds.
-# query3 <- "SELECT p.measyear as mytime,p.plot,p.cycle,p.subcycle,p.statecd,p.lon,p.lat,psm.expns,t.dia, t.statuscd,t.spcd as spcd, t.tpa_unadj, t.drybio_bole, t.drybio_top, t.drybio_stump, t.drybio_sapling, t.drybio_wdld_spp, t.drybio_bg FROM FIAOUT.TREE t, FIAOUT.PLOT p, FIAOUT.POP_PLOT_STRATUM_ASSGN ppsa, FIAOUT.POP_STRATUM psm WHERE p.cn=t.plt_cn AND ppsa.plt_cn = p.cn AND ppsa.stratum_cn = psm.cn" 
-# SGD ADDITION: Above query, when fetched, took up all available RAM, so ran it instead in PSQL
-query3 <- "SELECT * FROM fiaout_v2.query3"
+query3 <- "SELECT * FROM fiaout.query3"
 
 css.query3 <- dbSendQuery(con, query3)
 surv.all  <- fetch(css.query3, n = -1)
-# setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/')
 # write.table(surv.all, file='surv.all.csv', row.names=FALSE, col.names=TRUE, sep=",", quote=F)
-#SGD addition: next line only works if all columns are imported as character, need to change to numeric
+# next line only works if all columns are imported as character, need to change to numeric
 surv.all[] <- lapply(surv.all, function(x) as.numeric(x))
 lapply(surv.all, class) #check
-# SGD Addition: Manage changes not made in PSQL
-#SGD Note: These need to be in the correct column, as code occasionally calls by column not name
+# Manage changes not made in PSQL
+# Note: These need to be in the correct column, as code occasionally calls by column not name
 names(surv.all)[names(surv.all) == 'dia'] <- 'dbh'
 surv.all$dbh <- surv.all$dbh*2.54 # SI Units conversion
 names(surv.all)[names(surv.all) == 'mytime'] <- 'time'
 # Save surv.all after correctly formatted
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/')
 write.table(surv.all, file='surv.all.csv', row.names=FALSE, col.names=TRUE, sep=",", quote=F)
 #only select data from most current cycle, subcycle 
 survey.states <- unique(surv.all$statecd)
@@ -225,8 +207,8 @@ for(p in 1:nrow(uniq.pts)){
   spp.uncorr <- ddply(dat.tmp, .(dat.tmp$spcd, dat.tmp$tpa_unadj), nrow)[,3]
   spp.cnt    <- ddply(dat.tmp, .(dat.tmp$spcd, dat.tmp$tpa_unadj), nrow)[,3] * ddply(dat.tmp, .(dat.tmp$spcd, dat.tmp$tpa_unadj), nrow)[,2] * (1/ac2ha)
   
-#   spp.bio <- tapply(apply(dat.tmp[,13:16],1,sum),dat.tmp[,11],sum) * (1/spp.tpa) * 453.592*10^-6 * (1/ac2ha) #biomass = lbs/ac to Mg/ha
-    spp.bio <- tapply(apply(dat.tmp[,13:15],1,sum),dat.tmp[,11],sum) * (spp.tpa) * 453.592*10^-6 * (1/ac2ha) #biomass = lbs/ac to Mg/ha #SGD EDIT
+
+  spp.bio <- tapply(apply(dat.tmp[,13:15],1,sum),dat.tmp[,11],sum) * (spp.tpa) * 453.592*10^-6 * (1/ac2ha) #biomass = lbs/ac to Mg/ha
   
   spp.bas  <- tapply(pi*(dat.tmp[,9]/100/2)^2, dat.tmp[,11], sum) * (spp.tpa) * (1/ac2ha) #basal area = m2/ha
     
@@ -235,12 +217,6 @@ for(p in 1:nrow(uniq.pts)){
   
   avg.list[[p]] <- avg.plot
   
-#   #store data
-#   if(p==1){
-#     all.avg <- avg.plot
-#   } else{
-#     all.avg <- rbind(all.avg,avg.plot)
-#   }
   setTxtProgressBar(pb, p)
 }
 
@@ -258,20 +234,15 @@ proj4string(spp.spatial)=CRS("+proj=longlat +datum=WGS84") #define: WGS-84 lon,l
 spp.albers <- spTransform(spp.spatial,CRS("+init=epsg:3175")) #convert to: NAD83/Great Lakes and St Lawrence Albers projection
 pts.albers <- unique(coordinates(spp.albers))
 
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/')
 write.csv(spp.albers,"FIA_spp_albers_orig.csv")
 
 #2. Loop over dataset and separate by species
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/')
-spp.table  <- read.csv("FIA_Rscript_imports/FIA_conversion-SGD_remove_dups.csv",header=TRUE)
+spp.table  <- read.csv("FIA_conversion-SGD_remove_dups.csv",header=TRUE)
 spp.unique <- unique(all.avg[,4])
 
-# gridxmax <- 1133000
-# gridxmin <- -203000
-# gridymin <- 598000
-# gridymax <- 1494000
 
-# SGD EDIT: ALBERS base raster bounding box from paleon.geography.wisc.edu
+
+# ALBERS base raster bounding box from paleon.geography.wisc.edu
 gridxmax <- 2297000
 gridxmin <- -71000
 gridymin <- 58000
@@ -282,14 +253,7 @@ base.rast <- raster(xmn = gridxmin, xmx = gridxmax,
                     crs = "+init=epsg:3175")
 
 # If comparing output to validation raster, use that as base.rast
-# base.rast <- raster('C:/Users/sgdubois/Dropbox/FIA_work/ValidationData/rasters-SG/basal_area/Abies_balsamea_basal_area_alb.tif')
-
-# xo <- seq(gridxmin,gridxmax-1,by=8000)
-# yo <- seq(gridymin,gridymax-1,by=8000)
-# d1 <- expand.grid(x = xo, y = yo)
-# coordinates(d1) = c("x", "y")
-# gridded(d1) <- TRUE 
-# proj4string(d1)=CRS("+init=epsg:3175") 
+# base.rast <- raster('ValidationData/rasters-SG/basal_area/Abies_balsamea_basal_area_alb.tif')
 
 #------------Generate Output Files-------------
 #extract each species-level dbh response and extrapolate to the whole grid
@@ -339,7 +303,7 @@ for(s in 1:length(spp.unique)){
 # Sys.sleep(300)
 #names(dbh.stack) <- spp.abv[!is.na(spp.abv)]
 # writeRaster(dbh.stack,filename="FIA_spp_dbh.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix=value) 
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/') 
+
 writeRaster(dbh.stack,filename="FIA_spp_dbh.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
 # dbh.stack <- NULL
 # Sys.sleep(300)
@@ -397,7 +361,7 @@ for(s in 1:length(spp.unique)){
 
 # Sys.sleep(300)
 # writeRaster(den.stack,filename="FIA_spp_density.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix=value)
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/') 
+
 writeRaster(den.stack,filename="FIA_spp_density.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
 # den.stack <- NULL
 # Sys.sleep(300)
@@ -455,7 +419,7 @@ for(s in 1:length(spp.unique)){
 # Sys.sleep(300)
 # writeRaster(bas.stack,filename="FIA_spp_basalarea.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix=value) 
 #writeRaster(bas.stack,filename="FIA_spp_basalarea.nc",format="CDF") 
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/') 
+
 writeRaster(bas.stack,filename="FIA_spp_basalarea.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
 # bas.stack <- NULL
 # Sys.sleep(300)
@@ -509,8 +473,5 @@ for(s in 1:length(spp.unique)){
   }
   setTxtProgressBar(pb, s) 
 }
-# Sys.sleep(300)
-# writeRaster(bio.stack,filename="FIA_spp_biomass.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix=value) 
-#writeRaster(bio.stack,filename="FIA_spp_biomass.nc",format="CDF") 
-setwd('C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/') 
+
 writeRaster(bio.stack,filename="FIA_spp_biomass.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')

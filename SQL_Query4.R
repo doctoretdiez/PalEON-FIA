@@ -3,10 +3,10 @@
 # Written by SGD5/23/16
 
 # Install packages
-install.packages('RPostgreSQL')
+library('RPostgreSQL')
 
-# Load state.mat
-state.mat <- read.csv('')
+# # Load state.mat if not already in global environment
+# state.mat <- read.csv('')
 # ---------------Connect to SQL-----------------
 fia.database <- 'postgres'
 
@@ -20,16 +20,16 @@ con <- dbConnect(drv,dbname='postgres', user='postgres')
 
 # Query4 code for SQL:
 # CREATE TABLE fiaout.query4 AS
-# SELECT p.measyear as mytime, p.plot, p.cycle, p.subcycle, p.statecd, p.lon_actual_nad83 as lon, p.lat_actual_nad83 as lat, p.cn as plt_cn, 
-# t.cn as tree_cn, t.dia, t.statuscd, t.spcd as spcd, t.tpa_unadj, t.drybio_bole, t.drybio_top, t.drybio_stump 
+# SELECT p.measyear as mytime, p.plot, p.cycle, p.subcycle, p.statecd, p.lon_actual_nad83 as lon, p.lat_actual_nad83 as lat, p.cn as plt_cn,
+# t.cn as tree_cn, t.dia, t.statuscd, t.spcd as spcd, t.tpa_unadj, t.drybio_bole, t.drybio_top, t.drybio_stump
 # FROM fiaout.tree t, fiaout.plot_corrected p
 # WHERE p.cn=t.plt_cn;
 
 # Import data from SQL
 query4 <- "SELECT * FROM fiaout.query4"
 
-css.query3 <- dbSendQuery(con, query4)
-surv.all  <- fetch(css.query3, n = -1)
+css.query4 <- dbSendQuery(con, query4)
+surv.all  <- fetch(css.query4, n = -1)
 # Next line only works if all columns are imported as character, need to change to numeric
 surv.all[] <- lapply(surv.all, function(x) as.numeric(x))
 lapply(surv.all, class) #check
