@@ -1,0 +1,8 @@
+CREATE TABLE fiaout.tree_nodups AS
+SELECT DISTINCT * FROM fiaout.tree;
+
+CREATE TABLE fiaout.plot_nodups AS
+SELECT DISTINCT * FROM fiaout.plot;
+
+CREATE TABLE fiaout.survey_nodups AS
+SELECT DISTINCT * FROM fiaout.survey;
