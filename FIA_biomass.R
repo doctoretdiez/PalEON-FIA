@@ -36,11 +36,13 @@ tree_data3 <- merge(tree_data2, tree.spp, by.x="PalEON", by.y="PLSS")
 plt_cn <- unique(as.character(tree_data3$plt_cn))
 spcd_unique <- unique(tree_data3$spcd)
 
+# Jenkins biomass function
 calcbiomass <- function(beta1, beta2, dia, tpa){
   bm <- (exp(beta1 + beta2 * log(dia)))*tpa
   return(bm)
 }
 
+# Calculate biomass using Jenkins equation and convert to Mg/hanb
 tree_data3$Jenkins_Biomass <- calcbiomass(tree_data3$biomass_b1, tree_data3$biomass_b2, tree_data3$dbh, tree_data3$tpa_unadj) * (1/(ac2ha*1000))
 
 # ---------------Calculate FIA biomass----------------------
