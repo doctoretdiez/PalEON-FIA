@@ -1,12 +1,12 @@
 # Connect to the SQL database and fetch data
-# Note that this requires the matrix state.mat generated in fia2PalEON_v1-SGD.R
-# Written by SGD5/23/16
+# Adapted from FIA_biomass.R
+# Written by SGD 5/23/16
 
 # Install packages
 library('RPostgreSQL')
 
-# # Load state.mat if not already in global environment
-# state.mat <- read.csv('')
+# Load state.mat if not already in global environment
+state.mat <- read.csv('data/state_mat.csv')
 # ---------------Connect to SQL-----------------
 fia.database <- 'postgres'
 

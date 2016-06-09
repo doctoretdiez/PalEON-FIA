@@ -41,7 +41,8 @@ ac2ha   <- 0.404686   #conversion from 1 acre to hectares
 # create a PostgreSQL instance and create one connection.
 drv <- dbDriver("PostgreSQL") 
 
-# open the connection using user, passsword, etc., as root user
+# open the connection using user, password, etc., as root user
+# password not necessary as there is a valid pgpass.conf file
 con <- dbConnect(drv,dbname='postgres', user='postgres')
 
 
