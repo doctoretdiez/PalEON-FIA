@@ -13,8 +13,8 @@
 6.	Multiple lines can be entered into the pgpass.conf file (that you need to add to the correct directory). For example, with a password of “password,” these lines provide access to the database postgres for the user postgres, and access to all databases and users (with this password), respectively:
 ``` 
 localhost:5432:postgres:postgres:password
+*:*:*:*:password
 ```
-``` *:*:*:*:password```
 Note that multiple lines can be included in this file.
 
 ## Setting up the program ‘pgfutter’
@@ -22,8 +22,11 @@ Note that multiple lines can be included in this file.
 8.	Add path for pgfutter to accepted paths. Do this by right clicking on “Computer” and choosing Properties. Then go to Advanced System Settings > Environmental Variables. In the bottom pane, select the variable “Path” and click Edit. Add the copied path after the last semicolon
 
 ## Importing FIA data into PostgreSQL
-9.	The syntax for pgfutter on Windows is as follows: > pgfutter --pw “password” csv yourcsv.csv. NOTE: shouldn’t need quotes around the password. If using custom host, port, or username, type pgfutter --help for additional global options to customize.
-10.	To import all csv files in a directory, cd to that directory in cmd and enter: for %f in (*.csv) do pgfutter --pw “password” csv %f
+9.	The syntax for pgfutter on Windows is as follows: 
+> pgfutter --pw “password” csv yourcsv.csv
+NOTE: shouldn’t need quotes around the password. If using custom host, port, or username, type pgfutter --help for additional global options to customize.
+10.	To import all csv files in a directory, cd to that directory in cmd and enter: 
+> for %f in (*.csv) do pgfutter --pw “password” csv %f
 11.	The data is imported to the Postgres database under the Schema “import” by default. 
 12.	Change the name of this Schema; if dealing with many states, change it to the state abbreviation. This is easiest accomplished by opening PG Admin III and right clicking on the desired schema and selecting “Properties.” If importing multiple states and want to keep each in separate schema, do this between each import. 
 13.	Note: Indiana cannot be left as IN, as specifying this schema in a query causes problems as “in” is a command; so this schema should be names ind, and all files within the schema should follow the pattern ‘ind_’ instead is ‘in_’. 
