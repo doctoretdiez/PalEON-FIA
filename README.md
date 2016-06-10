@@ -52,14 +52,16 @@ for additional global options to customize.
 > createdb -E UTF8 -U postgres FIA_states
 ```
 Note: these commands were executed using Windows cmd, with the PostgreSQL superuser ‘postgres,’ and a password file.
-17.	Within the same directory as the backup file, execute the command 
+
+17.	Within the same directory as the backup file, execute the following command to restore the backed up database to the new database
 ```
 > psql -U postgres -d FIA_states -f FIA_states.sql
 ```
- to restore the backed up database to the new database. This database includes state data for the 16 Midwest and Northeast states, in addition to the combined states tables outlined below in the section “Combine similar tables between states.”
+This database includes state data for the 16 Midwest and Northeast states, in addition to the combined states tables outlined below in the section “Combine similar tables between states.”
 
 ## Combine similar tables between states
 Note: To run a query in Pg Admin III, click on the “Execute SQL Queries” button and in the new window, enter text and press the “Execute query” button.
+
 18.	Tables needed for analysis include: survey, tree, & plot (the actual plot data links only to column ‘cn’ in PLOT). Create a schema for the output data (“fiaout”) and execute the query in fiaout_tables_creation.txt.
 19.	Use the text in output_combine.txt to combine all necessary tables. The query runs most efficiently with only 1 execute statement, so it is advised to choose only one EXECUTE statement within the loop. Essentially, this query is executed 3 separate times, once for each table of interest. Note the above step creates the table using CT data, while this step adds all states except CT. If not using CT data, replace with a new state and update both queries.
 20.	Ensure that no states were added multiple times by running Remove_duplciates.txt and comparing row counts to the original table. They should be identical.
