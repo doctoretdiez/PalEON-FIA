@@ -4,8 +4,7 @@
 
 
 #Import tree names and codes
-setwd("C:/Users/sgdubois/Dropbox/FIA_work/FIA_Rscript_imports/")
-spp.codes <- read.csv('FIA_conversion_v02-SGD.csv', header=TRUE)
+spp.codes <- read.csv('Conversion_tables/FIA_conversion_v02-SGD.csv', header=TRUE)
 spp.codes.paleon <- spp.codes[,c('spcd', 'PalEON')]
 spp.codes.paleon_nodups <- spp.codes.paleon[-which(duplicated(spp.codes.paleon$spcd)),]
 tree.spp <- read.csv("plss.pft.conversion-SGD.csv", header=TRUE)

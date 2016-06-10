@@ -3,23 +3,6 @@
 # Adapted from fia2PalEON_v1-SGD.R
 
 
-# install.packages('geoR')
-# install.packages('sp')
-# install.packages('rgdal')
-# install.packages('raster')
-# install.packages('fields')
-# install.packages('ncdf')	
-# install.packages('plyr')
-# install.packages('RPostgreSQL')
-
-
-# library(geoR)
-# library(sp)
-# library(rgdal)
-# library(raster)
-# library(fields)
-# library(ncdf)	
-# library(plyr)
 library(RPostgreSQL)
 
 options(scipen = 999)

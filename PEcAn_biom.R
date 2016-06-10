@@ -56,7 +56,7 @@ pfts <- list()
 for(i in unique(spp.codes$pft)){
   pfts[[i]] <- spp.codes[spp.codes$pft==i,c('acronym', 'spcd')]
 }
-outdir <- "~/PEcAn_allom/"
+outdir <- "data/PEcAn_allom/"
 allom.stats <- AllomAve(pfts , components = 2, outdir=outdir, ngibbs=10000, dmin=17, dmax=maxdbh) # dmin>17 causes error
 
 allom.fit <- load.allom(outdir)
@@ -82,16 +82,15 @@ for(i in 1:length(tree_data_pecan$tree_cn)){
   
   setTxtProgressBar(pb, i)
 }
-setwd("C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/data/")
-write.csv(tree_data_pecan, "tree_data_pecan.csv", row.names=FALSE)
+
+write.csv(tree_data_pecan, "data/tree_data_pecan.csv", row.names=FALSE)
 
 # plot mean and intervals by PFT
 mypfts <- as.character(unique(tree_data_pecan$pft))
 for (i in mypfts){
   tree_data.tmp <- tree_data_pecan[tree_data_pecan$pft==i,]
   tree_data.tmp <- tree_data.tmp[order(tree_data.tmp$dbh),]
-  setwd("C:/Users/sgdubois/Dropbox/FIA_work/CodeOutput/PEcAn_allom_entire_FIA_conversion_10000/figures")
-  png(paste("Allom_estimates_", i, ".png",sep=""),width=5,height=5,units="in",res=200)
+  png(paste("data/figures/Allom_estimates_", i, ".png",sep=""),width=5,height=5,units="in",res=200)
   plot(tree_data.tmp$dbh, tree_data.tmp$conf_025,type='l',lty=2, col="blue",ylim=c(min(tree_data.tmp$pred_025), max(tree_data.tmp$pred_975)), 
        ylab="Biomass (kg)", xlab="DBH (cm)", main=i)
   lines(tree_data.tmp$dbh,tree_data.tmp$conf_500,lty=2,col="blue")
