@@ -6,10 +6,10 @@
 library(raster)
 
 # Load required tables
-spp.codes <- read.csv('FIA_conversion_v02-SGD.csv', header=TRUE)
-species_plot_bio <- read.csv('species_plot_bio.csv', header=TRUE)
+spp.codes <- read.csv('converstion_tables/FIA_conversion_v02-SGD.csv', header=TRUE)
+species_plot_bio <- read.csv('data/output/species_plot_bio.csv', header=TRUE)
 # ---------------------Rasterize biomass---------------------
-plt_cn <- read.csv(paste(inDir, "plt_cn_values.csv", sep="/"))
+plt_cn <- read.csv("data/plt_cn_values.csv", header=TRUE)
 plt_cn$STATECD <- NULL
 # SPATIAL CONVERSIONS OF DATASET
 # Convert from FIA lon,lat to the Albers projection
@@ -57,7 +57,7 @@ bio.stack.jenkins <- do.call("stack", bio.rast.jenkins)
 bio.stack.fia <- do.call("stack", bio.rast.fia)
 bio.stack.pecan <- do.call("stack", bio.rast.pecan)
 # Write rasters for each biomass method, for each species
-writeRaster(bio.stack.fia,filename="data/BIO.STACK.FIA/bio_fia_8km_v01.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
-writeRaster(bio.stack.jenkins,filename="data/BIO.STACK.JENKINS/bio_jenkins_8km_v01.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
-writeRaster(bio.stack.pecan,filename="data/BIO.STACK.PECAN/bio_pecan_8km_v01.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
+writeRaster(bio.stack.fia,filename="data/output/BIO.STACK.FIA/bio_fia_8km_v01.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
+writeRaster(bio.stack.jenkins,filename="data/output/BIO.STACK.JENKINS/bio_jenkins_8km_v01.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
+writeRaster(bio.stack.pecan,filename="data/output/BIO.STACK.PECAN/bio_pecan_8km_v01.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
 

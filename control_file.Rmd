@@ -45,5 +45,5 @@ source('~/PalEON-FIA/Plot_biom_agg.R')
 ## Rasterize Biomass
 Create rasters containing 8km x 8km estimates for each biomass method, by species
 ```{r Aggregate_biomass}
-source('~/PalEON-FIA/Rasterize_biom_agg.R')
+source('~/PalEON-FIA/Rasterize_biom.R')
 ```
