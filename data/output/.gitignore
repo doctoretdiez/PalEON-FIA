@@ -1,4 +1,4 @@
-# Leave out a test file #
+# Exclude output files #
 #######################
 
-test.txt
+
