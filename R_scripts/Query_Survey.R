@@ -19,7 +19,7 @@ drv <- dbDriver("PostgreSQL")
 
 # open the connection using user, password, etc., as root user
 # password not necessary as there is a valid pgpass.conf file
-con <- dbConnect(drv, dbname='postgres', user='postgres') 
+con <- dbConnect(drv, dbname=fia.database, user='postgres') 
 
 
 # -------------Query DB for all states and years---------------
@@ -110,4 +110,4 @@ for(i in 2:length(state.cycle)){
 }
 state.mat <- state.mat[complete.cases(state.mat),]
 colnames(state.mat) <- c("statecd","time","cycle","subcycle")
-write.csv(state.mat, 'data/state_mat.csv')
+write.csv(state.mat, 'data/output/state_mat.csv')

@@ -14,7 +14,7 @@ fia.database <- 'postgres'
 drv <- dbDriver("PostgreSQL")
 
 # open the connection using user, passsword, etc., as root user
-con <- dbConnect(drv,dbname='postgres', user='postgres')
+con <- dbConnect(drv,dbname=fia.database, user='postgres')
 
 # --------------Import SQL data----------------
 
@@ -69,4 +69,4 @@ row.names(surv.current) <- NULL
 surv.current.out <- surv.current
 surv.current.out$lon <- NULL
 surv.current.out$lat <- NULL
-write.csv(surv.current.out, 'data/full_fia_long.csv', row.names = FALSE)
+write.csv(surv.current.out, 'data/output/full_fia_long.csv', row.names = FALSE)

@@ -5,45 +5,51 @@ date: "June 3, 2016"
 output: html_document
 ---
 
-## Select most recent survey
-Query SQL for FIA Survey data, and select the cycle and subcycle closest to the specified year 
+## SQL Queries most recent survey
+Query SQL for FIA Survey data, and select the cycle and subcycle closest to the specified year. Select FIA Tree and Plot data, and return a csv with this data.
+Note on running code: Code from each section will be run only if the output from the code is not found in the data directory
+Note on querying PostgreSQL: SQL is queried with user name 'postgres' within the database 'postgres.' A password is not needed with a valid pgpass.conf file.
 ```{r Survey_data}
 library(knitr)
-source('~/PalEON-FIA/Query_Survey.R')
-```
+if ('full_fia_long.csv' %in% list.files('data/output/')){
+  surv.current <- read.csv('data/output/full_fia_long.csv', header=TRUE)
+} else {
+  if('state_mat.csv' %in% list.files('data/output/')){
+  state.mat <- read.csv('data/output/state_mat.csv', header=TRUE)
+  source('R_scripts/SQL_Query4.R')
+  } else {source('R_scripts/Query_Survey.R')
+    source('R_scripts/SQL_Query4.R')
+  }
+}
 
-## Select FIA data from SQL
-Select FIA Tree and Plot data, and return a csv with this data
-```{r Tree_data}
-source('~/PalEON-FIA/SQL_Query4.R')
 ```
 
 ## Estimate Jenkins Biomass
 Use the method from Jenkins et al. 2004 to estimate tree level biomass from the FIA tree data
 ```{r Jenkins_biomass}
-source('~/PalEON-FIA/Jenkins_biom.R')
+source('R_scripts/Jenkins_biom.R')
 ```
 
 ## Estimate FIA Biomass
 Use the FIA biomass estimates to get tree level biomass
 ```{r FIA_biomass}
-source('~/PalEON-FIA/FIA_biom.R')
+source('R_scripts/FIA_biom.R')
 ```
 
 ## Estimate PEcAn Biomass
 Use the PEcAn allometry package to calculate tree level biomass from the FIA tree data
 ```{r PEcAn_biomass}
-source('~/PalEON-FIA/PEcAn_biom.R')
+source('R_scripts/PEcAn_biom.R')
 ```
 
 ## Aggregate Biomass
 Aggregate Jenkins, FIA, and PEcAn biomass estimtates to the plot level. Returns csv of all three biomass estimates at the plot level, by species
 ```{r Aggregate_biomass}
-source('~/PalEON-FIA/Plot_biom_agg.R')
+source('R_scripts/Plot_biom_agg.R')
 ```
 
 ## Rasterize Biomass
 Create rasters containing 8km x 8km estimates for each biomass method, by species
 ```{r Aggregate_biomass}
-source('~/PalEON-FIA/Rasterize_biom.R')
+source('R_scripts/Rasterize_biom.R')
 ```
