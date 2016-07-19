@@ -7,19 +7,17 @@ if(!require(PEcAn.allometry)){
   library(devtools)
   install_github("PecanProject/pecan", subdir = "modules/allometry")
   require(PEcAn.allometry)
-}
+} else {require(PEcAn.allometry)}
 
 #Import tree names and codes
-setwd("C:/Users/sgdubois/Dropbox/FIA_work/FIA_Rscript_imports/")
-spp.codes <- read.csv('FIA_conversion_v02-SGD.csv', header=TRUE)
+spp.codes <- read.csv('Conversion_tables/FIA_conversion_v02-SGD.csv', header=TRUE)
 spp.codes.paleon <- spp.codes[,c('spcd', 'PalEON')]
 spp.codes.paleon_nodups <- spp.codes.paleon[-which(duplicated(spp.codes.paleon$spcd)),]
-tree.spp <- read.csv("plss.pft.conversion-SGD.csv", header=TRUE)
+tree.spp <- read.csv("Conversion_tables/plss.pft.conversion-SGD.csv", header=TRUE)
 
 # Conversion factors
 ac2ha   <- 0.404686   #conversion from 1 acre to hectares
 
-surv.current <- read.csv('full_fia_long.csv', header=TRUE)
 tree_data <- surv.current
 tree_data2 <- merge(tree_data, spp.codes.paleon_nodups, by="spcd")
 tree_data3 <- merge(tree_data2, tree.spp, by.x="PalEON", by.y="PLSS")
@@ -56,7 +54,8 @@ pfts <- list()
 for(i in unique(spp.codes$pft)){
   pfts[[i]] <- spp.codes[spp.codes$pft==i,c('acronym', 'spcd')]
 }
-outdir <- "data/PEcAn_allom/"
+outdir <- "data/output/PEcAn_allom/"
+maxdbh <- ceiling(max(tree_data4$dbh))
 allom.stats <- AllomAve(pfts , components = 2, outdir=outdir, ngibbs=10000, dmin=17, dmax=maxdbh) # dmin>17 causes error
 
 allom.fit <- load.allom(outdir)
@@ -83,14 +82,14 @@ for(i in 1:length(tree_data_pecan$tree_cn)){
   setTxtProgressBar(pb, i)
 }
 
-write.csv(tree_data_pecan, "data/tree_data_pecan.csv", row.names=FALSE)
+write.csv(tree_data_pecan, "data/output/tree_data_pecan.csv", row.names=FALSE)
 
 # plot mean and intervals by PFT
 mypfts <- as.character(unique(tree_data_pecan$pft))
 for (i in mypfts){
   tree_data.tmp <- tree_data_pecan[tree_data_pecan$pft==i,]
   tree_data.tmp <- tree_data.tmp[order(tree_data.tmp$dbh),]
-  png(paste("data/figures/Allom_estimates_", i, ".png",sep=""),width=5,height=5,units="in",res=200)
+  png(paste("data/output/figures/Allom_estimates_", i, ".png",sep=""),width=5,height=5,units="in",res=200)
   plot(tree_data.tmp$dbh, tree_data.tmp$conf_025,type='l',lty=2, col="blue",ylim=c(min(tree_data.tmp$pred_025), max(tree_data.tmp$pred_975)), 
        ylab="Biomass (kg)", xlab="DBH (cm)", main=i)
   lines(tree_data.tmp$dbh,tree_data.tmp$conf_500,lty=2,col="blue")
@@ -112,4 +111,4 @@ tree_data_pecan$PEcAn_Biomass <- tree_data_pecan$pred_mean * 6.018046 * (1/(ac2h
 tree_data_pecan_lite <- tree_data_pecan[,c("tree_cn", "PEcAn_Biomass")]
 tree_data5 <- merge(tree_data4, tree_data_pecan_lite, by="tree_cn", all.x=TRUE)
 
-write.csv(tree_data5, 'data/biom_fia_pecan.csv', row.names = FALSE)
+write.csv(tree_data5, 'data/output/biom_fia_pecan.csv', row.names = FALSE)

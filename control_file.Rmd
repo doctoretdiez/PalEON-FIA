@@ -49,7 +49,8 @@ source('R_scripts/Plot_biom_agg.R')
 ```
 
 ## Rasterize Biomass
-Create rasters containing 8km x 8km estimates for each biomass method, by species
-```{r Aggregate_biomass}
+Create rasters containing 8km x 8km estimates for each biomass method, by species.
+Note: requires table of location data, containing latitude and longitude for each FIA plot used. This table needs to be found in ```print(data/plt_location/plt_cn_values.csv)```
+```{r Rasterize}
 source('R_scripts/Rasterize_biom.R')
 ```
