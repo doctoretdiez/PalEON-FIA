@@ -6,10 +6,12 @@
 library(raster)
 
 # Load required tables
-spp.codes <- read.csv('converstion_tables/FIA_conversion_v02-SGD.csv', header=TRUE)
-species_plot_bio <- read.csv('data/output/species_plot_bio.csv', header=TRUE)
+spp.codes <- read.csv('Conversion_tables/FIA_conversion_v02-SGD.csv', header=TRUE)
+if(!("species_plot_bio" %in% ls())){
+  species_plot_bio <- read.csv('data/output/species_plot_biom.csv', header=TRUE)
+}
 # ---------------------Rasterize biomass---------------------
-plt_cn <- read.csv("data/plt_cn_values.csv", header=TRUE)
+plt_cn <- read.csv("data/plt_location/plt_cn_values.csv", header=TRUE)
 plt_cn$STATECD <- NULL
 # SPATIAL CONVERSIONS OF DATASET
 # Convert from FIA lon,lat to the Albers projection
