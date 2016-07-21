@@ -71,10 +71,9 @@ Note: To run a query in Pg Admin III, click on the “Execute SQL Queries” button 
 22.	Use the text in FIA_Plot_Merge.txt to create a plot table with the real lat/lon coordinates. 
 
 ## Generate table to be used in R script
-23.	Use the text in Query3.txt to create a table needed for the R script fia2PalEON_v1-SGD.R. Note this query pulls the correct lat/lon coordinates, and relabels them at ‘lat’ and ‘lon.’
-24.	Use the text in Query4.txt to create a table needed for the R script FIA_biomass. Note this query pulls the correct lat/lon coordinates, and relabels them at ‘lat’ and ‘lon.’
+Use the text in Query4.txt to create a table needed for the R script control_file . Note this query pulls the correct lat/lon coordinates, and relabels them at ‘lat’ and ‘lon.’
 
 ## Estimate Density, DBH, Basal Area, and Biomass 
-24.	Use the R script fia2PalEON_v1-SGD.R to import FIA data into R, scale it to gridded data, and estimate forest parameters. Be sure to make any changes to filenames when importing tables, including any changed schema and database names in PSQL.
-25.	Use the R script FIA_Biomass.R to estimate biomass using the FIA estimates, Jenkins et al. allometry, and the PEcAn allometry methods.
-26.	Alternate (in progress): Use control_file.Rmd to estimate parameters and create rasters.
+Use the R script control_file.Rmd to import FIA data from SQL (or alternatively, read in the csv file full_fia_long.csv located at data/output/), estimate forest parameters at the tree and species level, and generate output rasters. To run, this file requires the location data file plt_cn_values.csv to be located at data/plt_location/.
+
+Note that the R scripts used to create those sourced within control_file.Rmd are located within the directory R_scripts/original_scripts/. If you wish to manipulate the code as a whole, you can use these 'rough' scripts, and then will need to execute the SQL queries located within the text files Query3.txt and Query4.txt within postgreSQL.
