@@ -1,6 +1,0 @@
-# Exclude output files #
-#######################
-
-*
-!Readme.txt
-!.gitignore
