@@ -33,6 +33,6 @@ tree_count$density <- tree_count$n * tpa* (1/ac2ha)
 surv.current$basal_area <- (surv.current$dbh/2/100)^2 * pi * tpa * (1/ac2ha) # units m^2/ha
 species_FIA_basalarea <- aggregate(basal_area ~ spcd + plt_cn, surv.current, FUN=sum)
 
-avg.plot <- join_all(list(species_FIA_dbh, species_FIA_basalarea, tree_count), type = "full")
+species_plot_parameters <- join_all(list(species_FIA_dbh, species_FIA_basalarea, tree_count), type = "full")
 
-write.csv(avg.plot, 'data/output/species_plot_parameters.csv', row.names=FALSE)
+write.csv(species_plot_parameters, 'data/output/species_plot_parameters.csv', row.names=FALSE)

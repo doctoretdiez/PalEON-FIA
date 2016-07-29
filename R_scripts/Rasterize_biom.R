@@ -37,7 +37,7 @@ base.rast <- raster(xmn = gridxmin, xmx = gridxmax,
                     ymn = gridymin, ymx = gridymax, resolution = c(8000,8000),
                     crs = "+init=epsg:3175")
 
-# Create Raster for Jenkins
+# Create Rasters
 bio.rast.jenkins <- list()
 bio.rast.fia <- list()
 bio.rast.pecan <- list()
