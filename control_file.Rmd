@@ -48,9 +48,22 @@ Aggregate Jenkins, FIA, and PEcAn biomass estimtates to the plot level. Returns 
 source('R_scripts/Plot_biom_agg.R')
 ```
 
+## Estimate Forest Parameters
+Create estimates for mean DBH, density, and basal area and aggregate to the plot level. Returns a csv with these estimates at the plot level, by species.
+```{r Aggregate_parameters}
+source('R_scripts/Plot_parameters_agg.R')
+```
+
 ## Rasterize Biomass
 Create rasters containing 8km x 8km estimates for each biomass method, by species.
 Note: requires table of location data, containing latitude and longitude for each FIA plot used. This table needs to be found in ```print(data/plt_location/plt_cn_values.csv)```
-```{r Rasterize}
+```{r Rasterize_Biomass}
 source('R_scripts/Rasterize_biom.R')
+```
+
+## Rasterize Forest Parameters
+Create rasters containing 8km x 8km estimates for DBH, density, and basal area, by species.
+Note: requires table of location data, containing latitude and longitude for each FIA plot used. This table needs to be found in ```print(data/plt_location/plt_cn_values.csv)```
+```{r Rasterize_Parameters}
+source('R_scripts/Rasterize_parameters.R')
 ```
