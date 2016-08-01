@@ -21,7 +21,7 @@ statecd: FIA state code. 9 = Connecticut, 10 = Delaware, 17 = Illinois, 18 = Ind
 
 plt_cn: The "cn" column from the FIA Plot table. According to the FIADB User Guide: "Sequence number. A unique sequence number used to identify a plot record." Use this value to match the unfuzzed/unswapped coordinates to the plot
 
-dbh: diameter at breast height	
+dbh: diameter at breast height in centimeters	
 
 statuscd: FIA status code. A code indicating whether the sample tree is live, cut, or dead at the time of measurement. Includes dead and cut trees, which are required to estimate aboveground biomass and net annual volume for growth, mortality, and removals. This code is not used when querying data for change estimates. Note: New and replacement plots use only codes 1 and 2. All trees in tree_data5.csv have status code of 1 (live tree). 0 = no status, 1 = live tree, 2 = dead tree, 3 = removed - cut and removed by direct human activity related to harvesting , silviculture or land clearing. This tree is assumed to be utilized.	
 
@@ -41,6 +41,6 @@ Jenkins_Biomass: Biomass (Mg/ha) calculated using Jenkin's allometries
 
 FIA_total_biomass: Biomass (Mg/ha) calculated using Jaclyn Hatal Matthes's code
 
-pft: The "pft" column from FIA_conversion_v02-SGD.csv. 
+pft: The "pft" column from FIA_conversion_v02-SGD.csv. These pft classifications come from Table 1 in http://onlinelibrary.wiley.com/doi/10.1111/j.1365-2486.2011.02477.x/abstract. Abbreviations include: EH - Early succesional hardwood (Populus, Betula, Liquidambar), NMH - Northern midsuccesional hardwood (Quercus alba, Quercus rubra, Quercus velutina), SMH - Southern midsuccesional hardwood (Quercus pinus, Quercus stellata, Liriodendron), LH - Late succesional hardwood (Acer, Fagus, Tilia), NP - Northern pine (Pinus strobus, Pinus resinosa, Pinus banksiana), SP - Southern pine (Pinus toeda, Pinus elliottii, Pinus echinata), MC - Midsuccessional conifer (Picea mariana, Picea rubens, Picea glauca, LC - Late successional conifer (Tsuga, Juniperus, Abies balsamea), Evergreen - Evergreen hardwoods (Magnolia virginiana, Quercus virginiana, Ilex opaca), Hydric - Hydric (Taxodium, Nyssa biflora, Nyssa aquatica)
 
 PEcAn_Biomass: Biomass (Mg/ha) calculated using PEcAn allometries
