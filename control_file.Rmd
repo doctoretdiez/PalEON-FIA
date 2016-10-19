@@ -1,21 +1,26 @@
 ---
-title: "Control"
-author: "Sean"
+title: "Biomass Estimation from raw FIA data."
+author: "Sean DuBois"
 date: "June 3, 2016"
 output: html_document
 ---
 
 ## SQL Queries most recent survey
+
 Query SQL for FIA Survey data, and select the cycle and subcycle closest to the specified year. Select FIA Tree and Plot data, and return a csv with this data.
-Note on running code: Code from each section will be run only if the output from the code is not found in the data directory
+Note on running code: Code from each section will be run only if the output from the code is not found in the data directory.
+
 Note on querying PostgreSQL: SQL is queried with user name 'postgres' within the database 'postgres.' A password is not needed with a valid pgpass.conf file.
+
 ```{r Survey_data}
 library(knitr)
-if ('full_fia_long.csv' %in% list.files('data/output/')){
-  surv.current <- read.csv('data/output/full_fia_long.csv', header=TRUE)
+library(dplyr)
+
+if ('full_fia_long.csv' %in% list.files('data/output/')) {
+  surv.current <- read.csv('data/output/full_fia_long.csv', header = TRUE)
 } else {
-  if('state_mat.csv' %in% list.files('data/output/')){
-  state.mat <- read.csv('data/output/state_mat.csv', header=TRUE)
+  if ('state_mat.csv' %in% list.files('data/output/')) {
+  state.mat <- read.csv('data/output/state_mat.csv', header = TRUE)
   source('R_scripts/SQL_Query4.R')
   } else {source('R_scripts/Query_Survey.R')
     source('R_scripts/SQL_Query4.R')
@@ -25,33 +30,51 @@ if ('full_fia_long.csv' %in% list.files('data/output/')){
 ```
 
 ## Estimate Jenkins Biomass
-Use the method from Jenkins et al. 2004 to estimate tree level biomass from the FIA tree data
+Use the method from Jenkins et al. 2004 to estimate tree level biomass from the FIA tree data:
+
 ```{r Jenkins_biomass}
+
 source('R_scripts/Jenkins_biom.R')
+
+tree_data <- jenkins_biom(surv.current, write_out = TRUE)
+
 ```
 
 ## Estimate FIA Biomass
-Use the FIA biomass estimates to get tree level biomass
+
+Use the FIA biomass estimates to get tree level biomass:
 ```{r FIA_biomass}
+
 source('R_scripts/FIA_biom.R')
+
+tree_data <- fia_biom(tree_data, write_out = TRUE)
+
 ```
 
 ## Estimate PEcAn Biomass
 Use the PEcAn allometry package to calculate tree level biomass from the FIA tree data
 ```{r PEcAn_biomass}
+
 source('R_scripts/PEcAn_biom.R')
+
 ```
 
 ## Aggregate Biomass
 Aggregate Jenkins, FIA, and PEcAn biomass estimtates to the plot level. Returns csv of all three biomass estimates at the plot level, by species
+
 ```{r Aggregate_biomass}
+
 source('R_scripts/Plot_biom_agg.R')
+
 ```
 
 ## Estimate Forest Parameters
 Create estimates for mean DBH, density, and basal area and aggregate to the plot level. Returns a csv with these estimates at the plot level, by species.
+
 ```{r Aggregate_parameters}
+
 source('R_scripts/Plot_parameters_agg.R')
+
 ```
 
 ## Rasterize Biomass
