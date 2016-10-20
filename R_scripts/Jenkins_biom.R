@@ -11,8 +11,8 @@ jenkins_biom <- function(x, write_out = TRUE) {
   #Import tree names and codes.
   spp.codes <- read.csv('Conversion_tables/FIA_conversion_v02-SGD.csv', 
                         header = TRUE, stringsAsFactors = FALSE) %>%
-    select(spcd, PalEON) %>% 
-    distinct(spcd, PalEON)
+    dplyr::select(spcd, PalEON) %>% 
+    dplyr::distinct(spcd, PalEON)
 
   tree.spp <- read.csv("Conversion_tables/plss.pft.conversion-SGD.csv", header = TRUE,
                        stringsAsFactors = FALSE)
