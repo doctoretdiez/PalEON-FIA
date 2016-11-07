@@ -106,7 +106,7 @@ Juniperus virginiana var silicicola,Southern redcedar,JUVIS,67,LC,Cedar/juniper,
 Laguncularia racemosa,white -mangrove,LARA2,988,Evergreen,Other hardwood,Laguncularia_racemosa
 Larix laricina,tamarack,LALA,71,EH,Tamarack,Larix_laricina
 Larix spp,Larch spp,LASP,70,EH,Tamarack,Larix_spp
-Liquidambar styraciflua,sweetgum,LIST2,611,EH,Other hardwood,Liquidambar_styraciflua
+Liquidambar styraciflua,sweetgum,LIST2,611,EH,Sweet gum,Liquidambar_styraciflua
 Liriodendron tulipifera,yellow-poplar   ,LITU,621,SMH,Tulip poplar,Liriodendron_tulipifera
 Maclura pomifera,Osage-orange,MAPO,641,EH,Other hardwood,Maclura_pomifera
 Magnolia,magnolia,MAGNO,650,SMH,Other hardwood,Magnolia
@@ -127,10 +127,10 @@ Morus,mulberry,MORUS,680,SMH,Other hardwood,Morus
 Morus alba,white mulberry,MOAL,681,NMH,Other hardwood,Morus_alba
 Morus rubra,red mulberry  ,MORU2,682,NMH,Other hardwood,Morus_rubra
 NULL,"palm, other",PALM,915,Hydric,,NULL
-Nyssa aquatica,water tupelo,NYAQ2,691,Hydric,Other hardwood,Nyssa_aquatica
-Nyssa biflora,swamp tupelo,NYBI,694,Hydric,Other hardwood,Nyssa_biflora
-Nyssa ogeche,Ogechee tupelo,NYOG,692,Hydric,Other hardwood,Nyssa_ogeche
-Nyssa sylvatica,blackgum   ,NYSY,693,SMH,Other hardwood,Nyssa_sylvatica
+Nyssa aquatica,water tupelo,NYAQ2,691,Hydric,Black gum,Nyssa_aquatica
+Nyssa biflora,swamp tupelo,NYBI,694,Hydric,Black gum,Nyssa_biflora
+Nyssa ogeche,Ogechee tupelo,NYOG,692,Hydric,Black gum,Nyssa_ogeche
+Nyssa sylvatica,blackgum   ,NYSY,693,SMH,Black gum,Nyssa_sylvatica
 Ostrya virginiana,eastern hophornbeam  ,OSVI,701,NMH,Ironwood,Ostrya_virginiana
 Oxydendrum arboreum,sourwood,OXAR,711,LH,Other hardwood,Oxydendrum_arboreum
 Paulownia tomentosa,paulownia,PATO2,712,EH,Other hardwood,Paulownia_tomentosa
