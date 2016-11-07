@@ -86,7 +86,7 @@ pecan_biom <- function(x) {
                            pecan_conf_975  = NA)
 
   
-  for (i in 1:length(tree_data$tree_cn)) {
+  for (i in i:length(tree_data$tree_cn)) {
 
     start <- Sys.time()
     
@@ -130,24 +130,29 @@ pecan_biom <- function(x) {
                   max(tree_data.tmp$pred_975)), 
          ylab = "Biomass (kg)", xlab = "DBH (cm)", main = i)
     
-    lines(tree_data.tmp$dbh,tree_data.tmp$conf_500,lty=2,col="blue")
-    lines(tree_data.tmp$dbh,tree_data.tmp$conf_975,lty=2,col="blue")
-    lines(tree_data.tmp$dbh,tree_data.tmp$conf_mean,lty=1,col="blue", lwd=2)
+    lines(tree_data.tmp$dbh, tree_data.tmp$conf_500,  lty = 2, col = "blue")
+    lines(tree_data.tmp$dbh, tree_data.tmp$conf_975,  lty = 2, col = "blue")
+    lines(tree_data.tmp$dbh, tree_data.tmp$conf_mean, lty = 1, col = "blue", lwd = 2)
     
-    lines(tree_data.tmp$dbh,tree_data.tmp$pred_025,lty=2,col="red")
-    lines(tree_data.tmp$dbh,tree_data.tmp$pred_500,lty=2,col="red")
-    lines(tree_data.tmp$dbh,tree_data.tmp$pred_975,lty=2,col="red")
-    lines(tree_data.tmp$dbh,tree_data.tmp$conf_mean,lty=1,col="red", lwd=2)
+    lines(tree_data.tmp$dbh, tree_data.tmp$pred_025,  lty = 2, col = "red")
+    lines(tree_data.tmp$dbh, tree_data.tmp$pred_500,  lty = 2, col = "red")
+    lines(tree_data.tmp$dbh, tree_data.tmp$pred_975,  lty = 2, col = "red")
+    lines(tree_data.tmp$dbh, tree_data.tmp$conf_mean, lty = 1, col = "red", lwd = 2)
     
-    legend("topleft", legend = c("Prediction", "Confidence", "Quantile (0.025, 0.5, 0.975)", "Mean"), text.col = c("red", "blue", "black", "black"),
+    legend("topleft", 
+           legend = c("Prediction", 
+                      "Confidence", 
+                      "Quantile (0.025, 0.5, 0.975)", 
+                      "Mean"), 
+           text.col = c("red", "blue", "black", "black"),
            lty = c(0, 0, 2, 1))
     dev.off()
   }
-  # Currently, the Evergreen PFT provides poor estimates, so should remove
-  tree_data <- tree_data[-which(tree_data$pft=="Evergreen"),]
-  tree_data$PEcAn_Biomass <- tree_data$pred_mean * 6.018046 * (1/(ac2ha*1000)) # units: Mg/ha
-  tree_data_lite <- tree_data[,c("tree_cn", "PEcAn_Biomass")]
-  tree_data5 <- merge(tree_data4, tree_data_lite, by="tree_cn", all.x=TRUE)
   
-  write.csv(tree_data5, 'data/output/biom_fia_pecan.csv', row.names = FALSE)
+  # Currently, the Evergreen PFT provides poor estimates, so should remove
+  pecan_vars <- pecan_vars * 6.018046 * (1/(ac2ha*1000)) # units: Mg/ha
+
+  write.csv(tree_data, 'data/output/biom_fia_pecan.csv', row.names = FALSE)
+  
+  return(tree_data)
 }
