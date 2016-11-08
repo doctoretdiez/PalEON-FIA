@@ -4,7 +4,7 @@
 
 # Load packages
 
-pecan_biom <- function(x) {
+pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
   if (!require(PEcAn.allometry)) {
     devtools::install_github("PecanProject/pecan", subdir = "modules/allometry")
     library(PEcAn.allometry)
@@ -64,17 +64,21 @@ pecan_biom <- function(x) {
   
   maxdbh <- ceiling(max(tree_data$dbh))
 
-  allom.stats <- AllomAve(pfts,
-                          components = 2,
-                          outdir     = outdir,
-                          ngibbs     = 10000,
-                          dmin       = 17,      # dmin > 17 causes error
-                          dmax       = maxdbh)
-
+  if (!length(list.files(outdir, pattern = "Rdata")) == 8) {
+    # There are only eight written Rdata files since the Evergreen PFT fails to write.
+    
+    allom.stats <- AllomAve(pfts,
+                            components = 2,
+                            outdir     = outdir,
+                            ngibbs     = 10000,
+                            dmin       = 17,      # dmin > 17 causes error
+                            dmax       = maxdbh)
+  }
+  
   allom.fit <- load.allom(outdir)
 
   # Run allom.predict by tree (may be too memory intensive to run every tree_data row at once)
-  
+
   # Pre-build the table to save space in memory:
   pecan_vars <- data.frame(pecan_pred_mean = rep(NA, nrow(tree_data)),
                            pecan_pred_025  = NA,
@@ -85,8 +89,18 @@ pecan_biom <- function(x) {
                            pecan_conf_500  = NA,
                            pecan_conf_975  = NA)
 
+#  @crollinson proposed a solution in https://github.com/PalEON-Project/PalEON-FIA/issues/5
+#  I haven't implemented it, but I'll look into it.  This is the
+#  abortive start.
+#  
+#  for (i in 1:length(unique(tree_data$pft))) {
+#    start <- Sys.time()
+#    
+#  }
   
-  for (i in i:length(tree_data$tree_cn)) {
+  mins <- rep(NA, 50)
+  
+  for (i in (i - 1):length(tree_data$tree_cn)) {
 
     start <- Sys.time()
     
@@ -106,53 +120,59 @@ pecan_biom <- function(x) {
     
     end <- Sys.time()
     
+    mins[i %% 50] <- as.numeric((end - start) * (nrow(tree_data) - i), units = "mins")
+    
     cat(paste0("\r", i, " of ", nrow(tree_data), ".  You have about ", 
-               round(as.numeric((end - start) * (nrow(tree_data) - i), units = "mins"), 0), " minutes left."))
+               round(mean(mins, na.rm = TRUE), 0), " minutes left."))
     flush.console()
   }
   
-  write.csv(tree_data, "data/output/tree_data.csv", row.names = FALSE)
-  
-  # plot mean and intervals by PFT
-  mypfts <- as.character(unique(tree_data$pft))
-  for (i in mypfts) {
-    
-    tree_data.tmp <- tree_data[tree_data$pft == i, ]
-    
-    tree_data.tmp <- tree_data.tmp[order(tree_data.tmp$dbh), ]
-    
-    png(paste("data/output/figures/Allom_estimates_", i, ".png",sep = ""),
-        width = 5, height = 5, units = "in", res = 200)
-    
-    plot(tree_data.tmp$dbh, tree_data.tmp$conf_025,
-         type = 'l', lty = 2, col = "blue",
-         ylim = c(min(tree_data.tmp$pred_025), 
-                  max(tree_data.tmp$pred_975)), 
-         ylab = "Biomass (kg)", xlab = "DBH (cm)", main = i)
-    
-    lines(tree_data.tmp$dbh, tree_data.tmp$conf_500,  lty = 2, col = "blue")
-    lines(tree_data.tmp$dbh, tree_data.tmp$conf_975,  lty = 2, col = "blue")
-    lines(tree_data.tmp$dbh, tree_data.tmp$conf_mean, lty = 1, col = "blue", lwd = 2)
-    
-    lines(tree_data.tmp$dbh, tree_data.tmp$pred_025,  lty = 2, col = "red")
-    lines(tree_data.tmp$dbh, tree_data.tmp$pred_500,  lty = 2, col = "red")
-    lines(tree_data.tmp$dbh, tree_data.tmp$pred_975,  lty = 2, col = "red")
-    lines(tree_data.tmp$dbh, tree_data.tmp$conf_mean, lty = 1, col = "red", lwd = 2)
-    
-    legend("topleft", 
-           legend = c("Prediction", 
-                      "Confidence", 
-                      "Quantile (0.025, 0.5, 0.975)", 
-                      "Mean"), 
-           text.col = c("red", "blue", "black", "black"),
-           lty = c(0, 0, 2, 1))
-    dev.off()
+  if (plotting == TRUE) {
+    # plot mean and intervals by PFT
+    mypfts <- as.character(unique(tree_data$pft))
+    for (i in mypfts) {
+      
+      tree_data.tmp <- tree_data[tree_data$pft == i, ]
+      
+      tree_data.tmp <- tree_data.tmp[order(tree_data.tmp$dbh), ]
+      
+      png(paste("data/output/figures/Allom_estimates_", i, ".png",sep = ""),
+          width = 5, height = 5, units = "in", res = 200)
+      
+      plot(tree_data.tmp$dbh, tree_data.tmp$conf_025,
+           type = 'l', lty = 2, col = "blue",
+           ylim = c(min(tree_data.tmp$pred_025), 
+                    max(tree_data.tmp$pred_975)), 
+           ylab = "Biomass (kg)", xlab = "DBH (cm)", main = i)
+      
+      lines(tree_data.tmp$dbh, tree_data.tmp$conf_500,  lty = 2, col = "blue")
+      lines(tree_data.tmp$dbh, tree_data.tmp$conf_975,  lty = 2, col = "blue")
+      lines(tree_data.tmp$dbh, tree_data.tmp$conf_mean, lty = 1, col = "blue", lwd = 2)
+      
+      lines(tree_data.tmp$dbh, tree_data.tmp$pred_025,  lty = 2, col = "red")
+      lines(tree_data.tmp$dbh, tree_data.tmp$pred_500,  lty = 2, col = "red")
+      lines(tree_data.tmp$dbh, tree_data.tmp$pred_975,  lty = 2, col = "red")
+      lines(tree_data.tmp$dbh, tree_data.tmp$conf_mean, lty = 1, col = "red", lwd = 2)
+      
+      legend("topleft", 
+             legend = c("Prediction", 
+                        "Confidence", 
+                        "Quantile (0.025, 0.5, 0.975)", 
+                        "Mean"), 
+             text.col = c("red", "blue", "black", "black"),
+             lty = c(0, 0, 2, 1))
+      dev.off()
+    }
   }
-  
-  # Currently, the Evergreen PFT provides poor estimates, so should remove
+
   pecan_vars <- pecan_vars * 6.018046 * (1/(ac2ha*1000)) # units: Mg/ha
 
-  write.csv(tree_data, 'data/output/biom_fia_pecan.csv', row.names = FALSE)
+  colnames(pecan_vars) <- paste0("biomass_", colnames(pecan_vars))
+  tree_data <- data.frame(tree_data, pecan_vars)
+  
+  if (write_out == TRUE) {
+    write.csv(tree_data, 'data/output/biom_fia_pecan.csv', row.names = FALSE)
+  }
   
   return(tree_data)
 }

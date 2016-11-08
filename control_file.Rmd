@@ -57,6 +57,8 @@ Use the PEcAn allometry package to calculate tree level biomass from the FIA tre
 
 source('R_scripts/PEcAn_biom.R')
 
+tree_data <- pecan_biom(tree_data, write_out = TRUE)
+
 ```
 
 ## Aggregate Biomass
