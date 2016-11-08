@@ -1,7 +1,7 @@
 # Exclude output files #
 #######################
-
 .Rhistory
 control_file.html
 .Rproj.user
 .Rproj
+PalEON-FIA.Rproj
