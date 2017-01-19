@@ -15,7 +15,8 @@ dataDir <- '.'
 
 dataFile <- 'biom_fia_pecan.csv'
 gridFile <- 'fia_paleongrid_albers.csv'
-taxaFile <- 'fia_conversion_v02-sgd.csv'
+# taxa translation not needed as already built into dataFile
+# taxaFile <- 'fia_conversion_v02-sgd.csv'
 
 biomassCol <- 'biomass_pecan_pred_mean'
 
@@ -25,9 +26,10 @@ setwd(dataDir)
 
 grid <- read_csv(gridFile, col_types = 'dcddd') %>%
     filter(STATECD %in% c(26, 27, 55))  # upper midwest
-taxa <- read_csv(taxaFile)
+# taxa <- read_csv(taxaFile)
 data <- read_csv(dataFile,
-                 col_types = 'cdcdddddcddddddddddcd')
+                 col_types = 'dddddccdddddddcddcddcdddddddd')
+#                 col_types = 'cdcdddddcddddddddddcd')
 # next lines are gymnastics so can treat the biomass column programmatically within dplyr syntax
 nm <- names(data)
 wh <- which(nm == biomassCol)
@@ -48,15 +50,15 @@ all_taxa <- expand.grid(PalEON = sort(unique(data$PalEON)),
     left_join(total, by = c('cell' = 'cell')) %>%
     inner_join(albers, by = c('cell' = 'cell'))
 
-data_plot <- data  %>% group_by(plt_cn, PalEON) %>%
-    summarize(biomass_total = sum(Jenkins_Biomass)) %>%
+data_by_plot <- data  %>% group_by(plt_cn, PalEON) %>%
+    summarize(biomass_total = sum(biomass_use)) %>%
     inner_join(grid, by = c('plt_cn' = 'CN')) 
 
 # average biomass (for occupied cells) and number of non-zero fia plots by cell
-data_cell <- data_plot %>% group_by(cell, PalEON) %>%
+data_by_cell <- data_by_plot %>% group_by(cell, PalEON) %>%
     summarize(biomass_avg = mean(biomass_total), count = n())
 
-data_complete <- all_taxa %>% left_join(data_cell, by = c('PalEON' = 'PalEON',
+data_complete <- all_taxa %>% left_join(data_by_cell, by = c('PalEON' = 'PalEON',
                                                            'cell' = 'cell'))
 data_complete$count[is.na(data_complete$count)] <- 0
 
