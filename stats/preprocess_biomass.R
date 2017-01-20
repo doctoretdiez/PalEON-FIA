@@ -6,7 +6,7 @@ library(ncdf4)
 source('fit_bam.R')
 
 # download files from Wiki:
-# biom_fia_pecan.zip (unzip this)
+# biom_fia_pecan_v0.1.zip (unzip this)
 # fia_paleongrid_albers.csv
 # paleonMask.nc
 
@@ -20,7 +20,7 @@ states <- c(UMW, LMW)
 
 data_dir <- '.'
 
-data_file <- 'biom_fia_pecan.csv'
+data_file <- 'biom_fia_pecan_v0.1.csv'
 grid_file <- 'fia_paleongrid_albers.csv'
 # taxa translation not needed as already built into data_file
 # taxa_file <- 'fia_conversion_v02-sgd.csv'
