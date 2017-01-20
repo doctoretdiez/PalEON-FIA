@@ -1,38 +1,45 @@
 library(readr)
 library(magrittr)
 library(dplyr)
+library(ncdf4)
+
+source('fit_bam.R')
 
 # download files from Wiki:
 # biom_fia_pecan.zip (unzip this)
 # fia_paleongrid_albers.csv
-# fia_conversion_v02-sgd.csv
+# paleonMask.nc
 
 # decide if use Jenkins or Pecan allometry
 # for now if use Pecan, just use point estimate, namely biomass_pecan_pred_mean
 # CJP believes that 'pred' are the columns to use as these should incorporate tree-to-tree variability
 
-dataDir <- '.'
+UMW <- c(26, 27, 55) # upper midwest FIPS (MN, WI, MI)
+LMW <- c(17, 18)     # lower midwest FIPS (IL and IN)
+states <- c(UMW, LMW)
 
-dataFile <- 'biom_fia_pecan.csv'
-gridFile <- 'fia_paleongrid_albers.csv'
-# taxa translation not needed as already built into dataFile
-# taxaFile <- 'fia_conversion_v02-sgd.csv'
+data_dir <- '.'
 
-biomassCol <- 'biomass_pecan_pred_mean'
+data_file <- 'biom_fia_pecan.csv'
+grid_file <- 'fia_paleongrid_albers.csv'
+# taxa translation not needed as already built into data_file
+# taxa_file <- 'fia_conversion_v02-sgd.csv'
+
+biomass_col <- 'biomass_pecan_pred_mean'
 
 # using character string here for safety because FIA plot ids are near the maximum length of integers in 16-bit numeric representation
 
-setwd(dataDir)
+setwd(data_dir)
 
-grid <- read_csv(gridFile, col_types = 'dcddd') %>%
-    filter(STATECD %in% c(26, 27, 55))  # upper midwest
-# taxa <- read_csv(taxaFile)
-data <- read_csv(dataFile,
+grid <- read_csv(grid_file, col_types = 'dcddd') %>%
+    filter(STATECD %in% states) 
+# taxa <- read_csv(taxa_file)
+data <- read_csv(data_file,
                  col_types = 'dddddccdddddddcddcddcdddddddd')
 #                 col_types = 'cdcdddddcddddddddddcd')
 # next lines are gymnastics so can treat the biomass column programmatically within dplyr syntax
 nm <- names(data)
-wh <- which(nm == biomassCol)
+wh <- which(nm == biomass_col)
 nm[wh] <- 'biomass_use'
 names(data) <- nm
 data <- data %>% select(plt_cn, PalEON, time, biomass_use)
@@ -62,6 +69,26 @@ data_complete <- all_taxa %>% left_join(data_by_cell, by = c('PalEON' = 'PalEON'
                                                            'cell' = 'cell'))
 data_complete$count[is.na(data_complete$count)] <- 0
 
+### set up grid cells on which to do prediction
+
+mask <- nc_open('paleonMask.nc')
+regions <- ncvar_get(mask, 'subregion', c(1,1),c(-1,-1))
+
+x <- matrix(ncvar_get(mask, 'x', c(1),c(-1)), nrow = nrow(regions),
+            ncol = ncol(regions))
+y <- matrix(ncvar_get(mask, 'y', c(1),c(-1)),nrow = nrow(regions),
+            ncol = ncol(regions), byrow = TRUE) 
+
+west_regions <- c(2,3,5,6,11,12 )
+
+wh <- c(regions %in% west_regions)
+pred_grid <- data.frame(x = c(x), y = c(y))
+pred_grid <- pred_grid[wh, ]
+
+k_occ <- 1000
+k_pot <- 100
 
 
-
+#  example of fitting
+results <- fit(data_complete,pred_grid, k_occ = k_occ, k_pot = k_pot,
+    taxon = 'Oak')
