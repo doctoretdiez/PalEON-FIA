@@ -100,7 +100,7 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
   
   mins <- rep(NA, 50)
   
-  for (i in (i - 1):length(tree_data$tree_cn)) {
+  for (i in 1:length(tree_data$tree_cn)) {
 
     start <- Sys.time()
     
