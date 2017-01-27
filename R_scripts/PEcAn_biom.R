@@ -37,27 +37,32 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
   
   spp.codes <- read.csv('Conversion_tables/FIA_conversion_v02-SGD.csv', 
                         header = TRUE, stringsAsFactors = FALSE) %>% 
-    dplyr::select(spcd, pft, acronym) %>% 
-    dplyr::distinct(spcd, pft, acronym)
+    dplyr::select(spcd, pft, acronym, PalEON) %>% 
+    dplyr::distinct(spcd, pft, acronym, PalEON)
   
   #  This adds the 'pft' column onto the data.frame
   tree_data <- tree_data %>% 
-    left_join(spp.codes, by = 'spcd') %>% 
+    left_join(spp.codes %>% dplyr::select(-PalEON), by = 'spcd') %>% 
     dplyr::select(-acronym)
   
   # Clean the tree_data to remove trees without allometric models:
   
-  tree_data <- tree_data %>% 
-    filter(!pft %in% c('Hydric', 'UNK'))
-  spp.codes <- spp.codes %>% 
-    filter(!pft %in% c('Hydric', 'UNK') & spcd %in% tree_data$spcd)
+  #tree_data <- tree_data %>% 
+  #  filter(!pft %in% c('Hydric', 'UNK'))
+  #spp.codes <- spp.codes %>% 
+  #  filter(!pft %in% c('Hydric', 'UNK') & spcd %in% tree_data$spcd)
   
   # Setup the Pecan run:
   # Create model using all species from FIA_conversion
+  
+  spp.codes$PalEON[spp.codes$PalEON == ''] <- 'None'
+  spp.codes$PalEON <- gsub('/', '.', spp.codes$PalEON)
+  
   pfts <- list()
-  for (i in 1:length(unique(spp.codes$pft))) {
-    pfts[[i]] <- unique(na.omit(spp.codes[spp.codes$pft %in% unique(spp.codes$pft)[i], c('acronym', 'spcd')]))
-    names(pfts)[i] <- unique(spp.codes$pft)[i]
+  
+  for (i in 1:length(unique(spp.codes$PalEON))) {
+    pfts[[i]] <- unique(na.omit(spp.codes[spp.codes$PalEON %in% unique(spp.codes$PalEON)[i], c('acronym', 'spcd')]))
+    names(pfts)[i] <- unique(spp.codes$PalEON)[i]
   }
   
   outdir <- "data/output/PEcAn_allom/"
@@ -77,6 +82,7 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
   
   allom.fit <- load.allom(outdir)
 
+  
   # Run allom.predict by tree (may be too memory intensive to run every tree_data row at once)
 
   # Pre-build the table to save space in memory:
@@ -100,17 +106,19 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
   
   mins <- rep(NA, 50)
   
+  tree_data$PalEON <- gsub('/', '.', tree_data$PalEON)
+  
   for (i in 1:length(tree_data$tree_cn)) {
 
     start <- Sys.time()
     
     pred <- allom.predict(allom.fit, 
                           dbh = tree_data$dbh[i], 
-                          pft = tree_data$pft[i])
+                          pft = tree_data$PalEON[i])
     
     conf <- allom.predict(allom.fit, 
                           dbh = tree_data$dbh[i], 
-                          pft = tree_data$pft[i], 
+                          pft = tree_data$PalEON[i], 
                           interval = "confidence")
     
     PI = quantile(pred, c(0.025, 0.5, 0.975), na.rm = TRUE)
