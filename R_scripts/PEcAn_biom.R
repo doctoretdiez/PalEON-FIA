@@ -5,6 +5,7 @@
 # Load packages
 
 pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
+  
   if (!require(PEcAn.allometry)) {
     devtools::install_github("PecanProject/pecan", subdir = "modules/allometry")
     library(PEcAn.allometry)
@@ -35,14 +36,17 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
     tree_data <- x
   }
   
-  spp.codes <- read.csv('Conversion_tables/FIA_conversion_v02-SGD.csv', 
+  spp.codes <- read.csv('Conversion_tables/FIA_conversion_v03.csv', 
                         header = TRUE, stringsAsFactors = FALSE) %>% 
-    dplyr::select(spcd, pft, acronym, PalEON) %>% 
-    dplyr::distinct(spcd, pft, acronym, PalEON)
+    dplyr::select(spcd, pft, acronym, Class_2, Proposed) %>% 
+    dplyr::distinct(spcd, pft, acronym, Class_2, Proposed)
+  
+  spp.codes$new_pft <- ifelse(!is.na(spp.codes$Class_2), spp.codes$Class_2,
+                              spp.codes$Proposed)
   
   #  This adds the 'pft' column onto the data.frame
   tree_data <- tree_data %>% 
-    left_join(spp.codes %>% dplyr::select(-PalEON), by = 'spcd') %>% 
+    left_join(spp.codes %>% dplyr::select(-Proposed, -Class_2), by = 'spcd') %>% 
     dplyr::select(-acronym)
   
   # Clean the tree_data to remove trees without allometric models:
@@ -55,14 +59,24 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
   # Setup the Pecan run:
   # Create model using all species from FIA_conversion
   
-  spp.codes$PalEON[spp.codes$PalEON == ''] <- 'None'
-  spp.codes$PalEON <- gsub('/', '.', spp.codes$PalEON)
+  # SJG - I didn't recode every spcd, I only coded spcds that occur in the
+  # FIA data for the PalEON domain.
+
+  spp.codes <- spp.codes %>% filter(!new_pft == '')
+  
+  assertthat::assert_that(all(unique(tree_data$spcd) %in% spp.codes$spcd))
   
   pfts <- list()
   
-  for (i in 1:length(unique(spp.codes$PalEON))) {
-    pfts[[i]] <- unique(na.omit(spp.codes[spp.codes$PalEON %in% unique(spp.codes$PalEON)[i], c('acronym', 'spcd')]))
-    names(pfts)[i] <- unique(spp.codes$PalEON)[i]
+  for (i in 1:nrow(spp.codes)) {
+    
+    codes <- unlist(strsplit(spp.codes$new_pft[i], split = ';'))
+    
+    pfts[[i]] <- na.omit(data.frame(spcd    = codes,
+                            acronym = spp.codes$acronym[match(codes, spp.codes$spcd)]))
+                            
+    names(pfts)[i] <- spp.codes$acronym[i]          
+    
   }
   
   outdir <- "data/output/PEcAn_allom/"
@@ -72,16 +86,15 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
   if (!length(list.files(outdir, pattern = "Rdata")) == 8) {
     # There are only eight written Rdata files since the Evergreen PFT fails to write.
     
-    allom.stats <- AllomAve(pfts,
-                            components = 2,
-                            outdir     = outdir,
-                            ngibbs     = 10000,
-                            dmin       = 17,      # dmin > 17 causes error
-                            dmax       = maxdbh)
-  }
+      allom.stats <- AllomAve(pfts,
+                              components = 2,
+                              outdir     = outdir,
+                              ngibbs     = 10000,
+                              dmin       = 17,      # dmin > 17 causes error
+                              dmax       = maxdbh)
+    }
   
   allom.fit <- load.allom(outdir)
-
   
   # Run allom.predict by tree (may be too memory intensive to run every tree_data row at once)
 
