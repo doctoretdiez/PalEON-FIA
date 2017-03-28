@@ -2,27 +2,30 @@
 # Adapted from FIA_biomass.R
 # Created by Sean DuBois 6/23/16
 
-# Load required library
-library(raster)
 
 # Load required tables
-spp.codes <- read.csv('Conversion_tables/FIA_conversion_v02-SGD.csv', header=TRUE)
-if(!("species_plot_bio" %in% ls())){
-  species_plot_bio <- read.csv('data/output/species_plot_biom.csv', header=TRUE)
+spp.codes <- read.csv('Conversion_tables/FIA_conversion_v02-SGD.csv', header = TRUE)
+
+if (!("species_plot_bio" %in% ls())) {
+  species_plot_bio <- read.csv('data/output/species_plot_biom.csv', header = TRUE)
 }
+
 # ---------------------Rasterize biomass---------------------
-plt_cn <- read.csv("data/plt_location/plt_cn_values.csv", header=TRUE)
+plt_cn <- read.csv("data/plt_location/plt_cn_values.csv", header = TRUE)
+
 plt_cn$STATECD <- NULL
+
 # SPATIAL CONVERSIONS OF DATASET
 # Convert from FIA lon,lat to the Albers projection
-spp.spatial <- merge(species_plot_bio, plt_cn, by.x="plt_cn", by.y="CN")
-colnames(spp.spatial)[names(spp.spatial)=="LON_ACTUAL_NAD83"] <- "x"
-colnames(spp.spatial)[names(spp.spatial)=="LAT_ACTUAL_NAD83"] <- "y"
+spp.spatial <- merge(species_plot_bio, plt_cn, by.x = "plt_cn", by.y = "CN")
 
-coordinates(spp.spatial)=~x+y
-proj4string(spp.spatial)=CRS("+proj=longlat +datum=WGS84") #define: WGS-84 lon,lat projection
+colnames(spp.spatial)[names(spp.spatial) == "LON_ACTUAL_NAD83"] <- "x"
+colnames(spp.spatial)[names(spp.spatial) == "LAT_ACTUAL_NAD83"] <- "y"
+
+coordinates(spp.spatial) <- ~x + y
+
+proj4string(spp.spatial) <- CRS("+proj=longlat +datum=WGS84") #define: WGS-84 lon,lat projection
 spp.albers <- spTransform(spp.spatial,CRS("+init=epsg:3175")) #convert to: NAD83/Great Lakes and St Lawrence Albers projection
-# pts.albers <- unique(coordinates(spp.albers))
 
 #2. Loop over dataset and separate by species
 spp.unique <- unique(species_plot_bio$spcd)
@@ -55,6 +58,7 @@ for(s in 1:length(spp.unique)){
   
   setTxtProgressBar(pb, s) 
 }
+
 bio.stack.jenkins <- do.call("stack", bio.rast.jenkins)
 bio.stack.fia <- do.call("stack", bio.rast.fia)
 bio.stack.pecan <- do.call("stack", bio.rast.pecan)
@@ -62,4 +66,3 @@ bio.stack.pecan <- do.call("stack", bio.rast.pecan)
 writeRaster(bio.stack.fia,filename="data/output/BIO.STACK.FIA/bio_fia_8km_v01.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
 writeRaster(bio.stack.jenkins,filename="data/output/BIO.STACK.JENKINS/bio_jenkins_8km_v01.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
 writeRaster(bio.stack.pecan,filename="data/output/BIO.STACK.PECAN/bio_pecan_8km_v01.tif",format="GTiff",overwrite=TRUE,bylayer=TRUE,suffix='names')
-
