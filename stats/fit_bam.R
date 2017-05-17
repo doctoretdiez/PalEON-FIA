@@ -78,6 +78,111 @@ fit <- function(fulldata, grid, k_occ, k_pot, taxon, unc = 'bayes') {
         cat("Note that the Bayesian uncertainty in areas well outside of the range of a taxon has unreasonably large uncertainty, likely due to numerical issues in estimating very small probabilities. Uncertainty in these locations has been set to zero artificially.")
     }
 
-    preds <- data.frame(x = grid$x, y = grid$y, mean = mass, sd = pp.sd)
-    return(preds)
+    preds <- data.frame(x = grid$x*8000, y = grid$y*8000, mean = mass, sd = pp.sd)
+    #return(preds)
+    
+    preds2 = merge(preds,albers,by=c('x','y'))
+    
+    write.csv(preds2[, c('x', 'y', 'cell','mean')], paste0("C:/Users/paleolab/Desktop/FIA_biomass_input/output/",taxon, ".prediction.csv"))
+    write.csv(preds2[, c('x', 'y', 'cell', 'sd')], paste0("C:/Users/paleolab/Desktop/FIA_biomass_input/output/",taxon, ".uncertainty.csv"))
+    
+    
+    
+    png(filename = paste("./output/figures/",taxon, "-biomass-sdhist.png", sep=''),  height = 768, width=1024)
+    hist(pp.sd,nclass=50,main = paste('Standard Deviation'),xlab = paste('St.dev of', taxon, 'biomass'))
+    dev.off()
+    
+    
+    #gs.pal <- colorRampPalette(c("white","blue"),bias=.1,space="rgb")
+    
+    #makes continuous/smooth maps of observed biomass
+   # dat2$obs <- b[,taxon]
+  #  dat2$mass <- mass
+    
+    
+   # p2a = ggplot(dat2, aes(x=x, y=y,colour=obs))+ geom_point(shape=15, solid=TRUE,cex=3)+
+    #  scale_color_gradient("Observed", low = "white", high = "blue",            
+     #                      limits=range(dat2$obs)
+                           #breaks=brk
+    #  ) + 
+     # geom_point(shape=15, solid=TRUE,cex=3)  + theme(text = element_text(size=25), axis.text.x = element_text(size=25), 
+      #                                                axis.text.y = element_text(size=25), 
+       #                                               axis.title.x = element_text(size=25),
+        #                                              axis.title.y = element_text(size=25)) + ggtitle(paste(taxon))
+    
+    #png(paste("./output/figures/",taxon,"-biomass-obs-smooth.png", sep = " "),   height = 768, width=1024)
+    #print(p2a)
+    #dev.off()
+    
+    
+    #makes continuous/smooth maps of predicted biomass
+    library(ggplot2)
+    p1a = ggplot(preds, aes(x=x, y=y,colour=mass))+ geom_point(shape=15, solid=TRUE,cex=3)+
+      scale_color_gradient("Predicted", low = "white", high = "blue",           
+                           limits=range(preds$mean)
+                           #breaks=brk
+      ) + 
+      geom_point(shape=15, solid=TRUE,cex=3)  + theme(text = element_text(size=25), axis.text.x = element_text(size=25), 
+                                                      axis.text.y = element_text(size=25), 
+                                                      axis.title.x = element_text(size=25),
+                                                      axis.title.y = element_text(size=25)) + ggtitle(paste(taxon))
+    
+    png(paste("./output/figures/",taxon,"-biomass-mean-smooth.png", sep = " "),   height = 768, width=1024)
+    print(p1a)
+    dev.off()
+    
+    
+    #make map of observed with the same color scale as the predicted smooth maps and any value over the max predicted value is red
+  #  dat2$outlier <- paste(">",max(dat2$mass, na.rm = TRUE))
+  #  dat2$outlier[dat2$obs <= max(dat2$mass, na.rm = TRUE)] <- NA
+    
+    
+   # p2b = ggplot(data = subset(dat2, obs < max(dat2$mass, na.rm = TRUE)), aes(x=x, y=y,colour=obs))+ geom_point(shape=15, solid=TRUE,cex=3)+
+  #    scale_color_gradient("Observed", low = "white", high = "blue",             
+  #                         limits=range(dat2$mass)
+                           #breaks=brk
+   #   ) + 
+  #    geom_point(shape=15, solid=TRUE,cex=3)  +
+  #    geom_point(data = subset(dat2, obs > max(dat2$mass, na.rm = TRUE)), aes(x=x, y=y, fill=outlier), shape = 15, cex = 3, colour = "red") + theme(text = element_text(size=25), axis.text.x = element_text(size=25), 
+     #                                                                                                                                               axis.text.y = element_text(size=25), 
+      #                                                                                                                                              axis.title.x = element_text(size=25),
+       #                                                                                                                                             axis.title.y = element_text(size=25)) + ggtitle(paste(taxon))
+    
+   # png(paste("./output/figures/",taxon,"-biomass-obs-smooth-scaled.png", sep = " "),   height = 768, width=1024)
+  #  print(p2b)
+  #  dev.off()
+    
+    
+    
+    #Plots standard deviation map (discrete)
+   # SD = rep(0,N)
+  #  SD[which(sd>0 & sd<=10)] = 1
+  #  SD[which(sd>10 & sd<=50)] = 2
+    
+   # SD[which(sd>50 & sd<=100)] = 3
+  #  SD[which(sd>100) ] = 4
+    
+  #  SD = factor(SD,levels=0:4)
+  #  levels(SD) = c('0','(0,10]','(10,50]','(50, 100]','(100,200]')
+    
+   # preds$Sd <- SD
+  #  p2 = ggplot(preds, aes(x=x, y=y,colour=Sd))+ geom_point(shape=15, solid=TRUE,cex=3)+
+   #   scale_colour_manual(values=gs.pal(5),drop=FALSE) + theme(text = element_text(size=25), axis.text.x = element_text(size=25), 
+    #                                                           axis.text.y = element_text(size=25), 
+     #                                                          axis.title.x = element_text(size=25),
+      #                                                         axis.title.y = element_text(size=25)) + ggtitle(paste(taxon))
+    
+    
+  #  png(paste("./output/figures/",taxon,"-biomass-sd-discrete-freqbootstrap.png", sep=''),   height = 768, width=1024)
+  #  print(p2)
+  #  dev.off()
+    
+    
+    #plots the observed vs. predicted biomass for the taxon
+    
+   # png(paste("./output/figures/",taxon, "-biomass-comp-subset.png", sep=''),  height = 768, width=1024)
+    #plot(dat2$obs, mass, main = paste(taxon),
+     #    xlab='Observed',ylab = 'Predicted', cex = 3, cex.lab = 1.5, cex.axis = 1.5, cex.main = 1.5) 
+    #abline(0,1,lty=2,col=2)
+    #dev.off()
 }
