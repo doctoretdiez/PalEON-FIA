@@ -99,8 +99,12 @@ k_pot <- 100
 
 
 i <- 1:16
-taxa <- c("Ash", "Basswood", "Beech", "Birch", "Cedar.juniper", "Cherry", "Elm", "Fir",  "Hemlock", "Hickory", "Maple","Oak", "Other hardwood", "Pine", "Poplar", "Spruce")
-
+taxa <- c("Ash", "Basswood", "Beech", "Birch", "Cedar.juniper", "Cherry", "Elm", "Fir",  "Hemlock", "Hickory", "Maple","Oak", "Other hardwood", "Pine", "Poplar", "Spruce", "Tamarack", "Walnut")
+#these taxa are >1% of the total number of FIA trees, except Tamarack and Walnut. Below are each taxa's percentage
+#Maple 24%, Oak 13%, Pine 10%, Poplar 7%, Birch 6%, Cedar/juniper 5%, Ash 5%, Hemlock 5%, Spruce 4%, Cherry 3%,
+#Beech 2%, Fir 2%, Basswood 2%, Hickory 2%, Other hardwood 1%, Elm 1%, Tulip poplar 1%, Tamarck 0.92%, Walnut 0.70%,
+#Black gum 0.33%, Hackberry 0.30%, Sweet gum 0.23%, Sycamore 0.23%, Ironwood 0.17%, Willow 0.17%, Buckeye 0.06%,
+#Douglas fir 0.008%, Dogwood 0.002%, Uknown 0.001%, Alder 0.0007%.
 
 for(i in 1:length(taxa)){
   source('C:/Users/paleolab/Desktop/FIA_biomass_input/fit_bam.R')
