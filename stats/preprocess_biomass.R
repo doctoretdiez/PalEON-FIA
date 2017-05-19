@@ -98,7 +98,7 @@ k_pot <- 100
 #               taxon = 'Poplar')
 
 
-i <- 1:16
+i <- 1:18
 taxa <- c("Ash", "Basswood", "Beech", "Birch", "Cedar.juniper", "Cherry", "Elm", "Fir",  "Hemlock", "Hickory", "Maple","Oak", "Other hardwood", "Pine", "Poplar", "Spruce", "Tamarack", "Walnut")
 #these taxa are >1% of the total number of FIA trees, except Tamarack and Walnut. Below are each taxa's percentage
 #Maple 24%, Oak 13%, Pine 10%, Poplar 7%, Birch 6%, Cedar/juniper 5%, Ash 5%, Hemlock 5%, Spruce 4%, Cherry 3%,
