@@ -10,7 +10,7 @@ grid <- grid/8000
 #  stage 2 #
 ############
 
-#data <- data %>% filter(count > 0)
+data <- data %>% filter(count > 0)
 z <- log(data$avg_biomass)
 x <- data$x/8000
 y <- data$y/8000

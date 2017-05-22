@@ -130,7 +130,7 @@ head(biomass_by_cell)
 avgbiomass_data_complete <- albers %>% left_join(biomass_by_cell, by = c('cell' = 'cell'))
 head(avgbiomass_data_complete)
 
-data_complete$count[is.na(data_complete$count)] <- 0
+avgbiomass_data_complete$count[is.na(avgbiomass_data_complete$count)] <- 0
 
 
 # code to run total biomass,
@@ -138,8 +138,5 @@ data_complete$count[is.na(data_complete$count)] <- 0
 fulldata = avgbiomass_data_complete
 grid = pred_grid
 unc = 'bayes'
-
-
-
 
 
