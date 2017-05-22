@@ -98,8 +98,8 @@ k_pot <- 100
 #               taxon = 'Poplar')
 
 
-i <- 1:18
-taxa <- c("Ash", "Basswood", "Beech", "Birch", "Cedar.juniper", "Cherry", "Elm", "Fir",  "Hemlock", "Hickory", "Maple","Oak", "Other hardwood", "Pine", "Poplar", "Spruce", "Tamarack", "Walnut")
+i <- 1:16
+taxa <- c("Ash", "Basswood", "Beech", "Birch", "Cedar.juniper", "Cherry", "Elm", "Fir",  "Hemlock", "Hickory", "Maple","Oak", "Other hardwood", "Pine", "Poplar", "Spruce", "Tamarack", "Tulip poplar", "Walnut")
 #these taxa are >1% of the total number of FIA trees, except Tamarack and Walnut. Below are each taxa's percentage
 #Maple 24%, Oak 13%, Pine 10%, Poplar 7%, Birch 6%, Cedar/juniper 5%, Ash 5%, Hemlock 5%, Spruce 4%, Cherry 3%,
 #Beech 2%, Fir 2%, Basswood 2%, Hickory 2%, Other hardwood 1%, Elm 1%, Tulip poplar 1%, Tamarck 0.92%, Walnut 0.70%,
@@ -116,13 +116,30 @@ for(i in 1:length(taxa)){
 # run the next 4 lines, then run the code within the function in the fit_bam.R file.
 fulldata = data_complete
 grid = pred_grid
-taxon = 'Tamarack'
+taxon = 'Tulip poplar'
+unc = 'bayes'
+
+
+###############################
+##  total biomass per cell   ##
+###############################
+biomass_by_cell <- data_by_plot %>% group_by(cell) %>%
+  summarize(avg_biomass = mean(biomass_total),count = n())
+head(biomass_by_cell)
+
+avgbiomass_data_complete <- albers %>% left_join(biomass_by_cell, by = c('cell' = 'cell'))
+head(avgbiomass_data_complete)
+
+data_complete$count[is.na(data_complete$count)] <- 0
+
+
+# code to run total biomass,
+# run the next 4 lines, then run the code within the function in the fit_bam_totalbiomass.R file.
+fulldata = avgbiomass_data_complete
+grid = pred_grid
 unc = 'bayes'
 
 
 
-#total biomass per cell
-biomass_by_cell <- data_by_plot %>% group_by(cell) %>%
-  summarize(total_biomass = sum(biomass_total), count = n())
 
-head(biomass_by_cell)
+
