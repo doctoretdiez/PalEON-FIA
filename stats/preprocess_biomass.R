@@ -12,7 +12,8 @@ rm(list=ls())
 # fia_paleongrid_albers.csv
 # paleonMask.nc
 
-# decide if use Jenkins or Pecan allometry
+# decide if use Jenkins or Pecan allometry. 
+#### NOTE:5-26-17 JP decided to use Jenkins since the biomass manuscript is comparing FIA biomass to PLS biomass and the PLS biomass was estimated with the Jenkin's allometries. ###
 # for now if use Pecan, just use point estimate, namely biomass_pecan_pred_mean
 # CJP believes that 'pred' are the columns to use as these should incorporate tree-to-tree variability
 
@@ -20,14 +21,14 @@ UMW <- c(26, 27, 55) # upper midwest FIPS (MN, WI, MI)
 LMW <- c(17, 18)     # lower midwest FIPS (IL and IN)
 states <- c(UMW, LMW)
 
-data_dir <- 'C:/Users/paleolab/Desktop/FIA_biomass_input/'
+data_dir <- 'C:/Users/paleolab/Desktop/PalEON-FIA/stats/'
 
 data_file <- 'biom_fia_pecan_v0.1.csv'
 grid_file <- 'fia_paleongrid_albers.csv'
 # taxa translation not needed as already built into data_file
 # taxa_file <- 'fia_conversion_v02-sgd.csv'
 
-biomass_col <- 'biomass_pecan_pred_mean'
+biomass_col <- 'biomass_jenk'
 
 # using character string here for safety because FIA plot ids are near the maximum length of integers in 16-bit numeric representation
 
@@ -116,13 +117,13 @@ for(i in 1:length(taxa)){
 # run the next 4 lines, then run the code within the function in the fit_bam.R file.
 fulldata = data_complete
 grid = pred_grid
-taxon = 'Tulip poplar'
+taxon = 'Ash'
 unc = 'bayes'
 
 
-###############################
-##  total biomass per cell   ##
-###############################
+#######################################################
+##  average biomass per cell for all taxa combined   ##
+#######################################################
 biomass_by_cell <- data_by_plot %>% group_by(cell) %>%
   summarize(avg_biomass = mean(biomass_total),count = n())
 head(biomass_by_cell)

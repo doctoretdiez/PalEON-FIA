@@ -4,7 +4,9 @@ fit <- function(fulldata, grid, k_occ, k_pot, taxon, unc = 'bayes') {
     library(mgcv)
     
     data <- fulldata %>% filter(PalEON == taxon)
+    write.csv(data[, c('PalEON','cell','total','x', 'y', 'biomass_avg','count')], paste0("C:/Users/paleolab/Desktop/FIA_biomass_input/output/",taxon, ".observations.csv"))
     grid <- grid / 8000
+    
     
   ############
   #  stage 1 #

@@ -1,4 +1,7 @@
 #to estimate the total biomass per cell, we are using the following biomass_by_cell code from the end of the preprocess_biomass.R 
+#run the following code after running lines 124-141 in preprocess_biomass.R - these are the lines that calculate
+#average biomass for all the taxa per cell.
+
 
 library(mgcv)
 
