@@ -1,8 +1,8 @@
 #Observed biomass vs predicted biomass maps
 
-setwd('C:/Users/paleolab/Desktop/FIA_biomass_input/')
+setwd('C:/Users/jmurray7/Desktop/PalEON-FIA/')
 
-preds3 = read.csv("output/total.prediction_v0.1.csv", stringsAsFactors = FALSE, header = TRUE)
+preds3 = read.csv("stats/output/total.prediction_v0.1.csv", stringsAsFactors = FALSE, header = TRUE)
 obs = avgbiomass_data_complete
 
 #pred and obs have different numbers of cells
@@ -28,23 +28,23 @@ obs.preds2 = as.data.frame(cbind(newobs.pred,newpred))
 colnames(obs.preds2) = c("cell","x","y","obs_biomass","pred_biomass")
 head(obs.preds2)
 
-write.csv(obs.preds2,paste0("C:/Users/paleolab/Desktop/FIA_biomass_input/output/total-obs-pred_v0.1.csv"), row.names = FALSE)
+write.csv(obs.preds2,paste0("C:/Users/jmurray7/Desktop/PalEON-FIA/stats/output/total-obs-pred_v0.1.csv"), row.names = FALSE)
 
 
 #look at the data a bit
 summary(obs.preds2$obs_biomass)
 summary(obs.preds2$pred_biomass)
 
-png(paste("./output/figures/BoxPlot-total-biomass-Observed-v0.1.png", sep = " "),   height = 768, width=1024)
+png(paste("./stats/output/figures/BoxPlot-total-biomass-Observed-v0.1.png", sep = " "),   height = 768, width=1024)
 boxplot(obs.preds2$obs_biomass)
 dev.off()
 
-png(paste("./output/figures/BoxPlot-total-biomass-Predicted-v0.1.png", sep = " "),   height = 768, width=1024)
+png(paste("./stats/output/figures/BoxPlot-total-biomass-Predicted-v0.1.png", sep = " "),   height = 768, width=1024)
 boxplot(obs.preds2$pred_biomass)
 dev.off()
 
 #scatter plot of observed vs. predicted biomass
-png(paste("./output/figures/obs_v_preds-biomass.png", sep=''),  height = 768, width=1024)
+png(paste("./stats/output/figures/obs_v_preds-biomass.png", sep=''),  height = 768, width=1024)
 plot(obs.preds2$obs_biomass, obs.preds2$pred_biomass, main = "Total Biomass",
      xlab='Observed',ylab = 'Predicted', cex = 3, cex.lab = 1.5, cex.axis = 1.5, cex.main = 1.5) 
 abline(0,1,lty=2,col=2)
@@ -54,7 +54,7 @@ dev.off()
 library(ggplot2)
 #terrain.colors plots of observed biomass values and predicted biomass values
 #total biomass observations
-p3obs = ggplot(obs.preds2, aes(x=x, y=y,colour=obs_biomass, na.rm = TRUE))+ geom_point(shape=15, cex=3)+
+p3obs = ggplot(obs.preds2, aes(x=x, y=y,colour=obs_biomass))+ geom_point(shape=15, cex=3)+
   scale_color_gradientn(colours = terrain.colors(7)) + 
   geom_point(shape=15, cex=3)  + theme(text = element_text(size=25), axis.text.x = element_text(size=25), 
                                                   axis.text.y = element_text(size=25), 
@@ -66,9 +66,31 @@ p3obs = ggplot(obs.preds2, aes(x=x, y=y,colour=obs_biomass, na.rm = TRUE))+ geom
 
 p3obs
 
-png(paste("./output/figures/Total-biomass-Observed-terraincolors-v0.1.png", sep = " "),   height = 768, width=1024)
+png(paste("./stats/output/figures/Total-biomass-Observed-terraincolors-v0.1.png", sep = " "),   height = 768, width=1024)
 print(p3obs)
 dev.off()
+
+
+#total biomass observations with NAs removed
+fia = read.csv("stats/output/total-obs-pred_v0.1.csv")
+fia_na = fia[complete.cases(fia),]
+
+p3obs_na = ggplot(fia_na, aes(x=x, y=y,colour=obs_biomass))+ geom_point(shape=15, cex=3)+
+  scale_color_gradientn(colours = terrain.colors(7)) + 
+  geom_point(shape=15, cex=3)  + theme(text = element_text(size=25), axis.text.x = element_text(size=25), 
+                                       axis.text.y = element_text(size=25), 
+                                       axis.title.x = element_text(size=25),
+                                       axis.title.y = element_text(size=25)) + ggtitle(paste("Observed Total Biomass no NAs v0.1")) +
+  theme_bw() + theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                     panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"))
+
+
+p3obs_na
+
+png(paste("./stats/output/figures/Total-biomass-Observed-noNAs-terraincolors-v0.1.png", sep = " "),   height = 768, width=1024)
+print(p3obs_na)
+dev.off()
+
 
 
 
@@ -83,7 +105,7 @@ p3preds = ggplot(obs.preds2, aes(x=x, y=y,colour=pred_biomass))+ geom_point(shap
 
 p3preds
 
-png(paste("./output/figures/Total-biomass-Predicted-terraincolors-v0.1.png", sep = " "),   height = 768, width=1024)
+png(paste("./stats/output/figures/Total-biomass-Predicted-terraincolors-v0.1.png", sep = " "),   height = 768, width=1024)
 print(p3preds)
 dev.off()
 
@@ -101,7 +123,7 @@ p3outlier = ggplot(data = subset(obs.preds2, obs.preds2$obs_biomass < max(obs.pr
 
 p3outlier
 
-png(paste("./output/figures/Total-Observed-Biomass-Outlier-v0.1.png", sep = " "),   height = 768, width=1024)
+png(paste("./stats/output/figures/Total-Observed-Biomass-Outlier-v0.1.png", sep = " "),   height = 768, width=1024)
 print(p3outlier)
 dev.off()
 

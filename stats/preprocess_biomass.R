@@ -5,7 +5,7 @@ library(ncdf4)
 
 rm(list=ls())
 
-#source('C:/Users/paleolab/Desktop/PalEON-FIA/stats/fit_bam.R')
+#source('C:/Users/jmurray7/Desktop/PalEON-FIA/stats/fit_bam.R')
 
 # download files from Wiki:
 # biom_fia_pecan_v0.1.zip (unzip this)
@@ -21,7 +21,7 @@ UMW <- c(26, 27, 55) # upper midwest FIPS (MN, WI, MI)
 LMW <- c(17, 18)     # lower midwest FIPS (IL and IN)
 states <- c(UMW, LMW)
 
-data_dir <- 'C:/Users/paleolab/Desktop/PalEON-FIA/stats/'
+data_dir <- 'C:/Users/jmurray7/Desktop/PalEON-FIA/stats/'
 
 data_file <- 'biom_fia_pecan_v0.1.csv'
 grid_file <- 'fia_paleongrid_albers.csv'
@@ -108,7 +108,7 @@ taxa <- c("Ash", "Basswood", "Beech", "Birch", "Cedar.juniper", "Cherry", "Elm",
 #Douglas fir 0.008%, Dogwood 0.002%, Uknown 0.001%, Alder 0.0007%.
 
 for(i in 1:length(taxa)){
-  source('C:/Users/paleolab/Desktop/FIA_biomass_input/fit_bam.R')
+  source('C:/Users/jmurray7/Desktop/PalEON-FIA/stats/fit_bam.R')
   fit(fulldata = data_complete, grid = pred_grid, k_occ = k_occ, k_pot = k_pot, taxon=taxa[i], unc = 'bayes')
 }
 

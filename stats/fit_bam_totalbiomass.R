@@ -70,12 +70,12 @@ preds <- data.frame(x = grid$x*8000, y = grid$y*8000, mean = mass, sd = pp.sd)
 
 preds2 = merge(preds,albers,by=c('x','y'))
 
-write.csv(preds2[, c('x', 'y', 'cell','mean')], paste0("C:/Users/paleolab/Desktop/FIA_biomass_input/output/total.prediction_v0.1.csv"))
-write.csv(preds2[, c('x', 'y', 'cell', 'sd')], paste0("C:/Users/paleolab/Desktop/FIA_biomass_input/output/total.uncertainty_v0.1.csv"))
+write.csv(preds2[, c('x', 'y', 'cell','mean')], paste0("C:/Users/jmurray7/Desktop/PalEON-FIA/stats/output/total.prediction_v0.1.csv"))
+write.csv(preds2[, c('x', 'y', 'cell', 'sd')], paste0("C:/Users/jmurray7/Desktop/PalEON-FIA/stats/output/total.uncertainty_v0.1.csv"))
 
 
 
-png(filename = paste("./output/figures/total-biomass-sdhist_v0.1.png", sep=''),  height = 768, width=1024)
+png(filename = paste("./stats/output/figures/total-biomass-sdhist_v0.1.png", sep=''),  height = 768, width=1024)
 hist(pp.sd,nclass=50,main = paste('Standard Deviation'),xlab = paste('St.dev of total biomass per cell'))
 dev.off()
 
@@ -91,6 +91,6 @@ p1a = ggplot(preds, aes(x=x, y=y,colour=mass))+ geom_point(shape=15, solid=TRUE,
                                                   axis.title.x = element_text(size=25),
                                                   axis.title.y = element_text(size=25)) + ggtitle(paste("total biomass per cell"))
 
-png(paste("./output/figures/total-biomasspercell-mean-smooth_v0.1.png", sep = " "),   height = 768, width=1024)
+png(paste("./stats/output/figures/total-biomasspercell-mean-smooth_v0.1.png", sep = " "),   height = 768, width=1024)
 print(p1a)
 dev.off()
