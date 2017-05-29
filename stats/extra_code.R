@@ -127,3 +127,22 @@ png(paste("./stats/output/figures/Total-Observed-Biomass-Outlier-v0.1.png", sep 
 print(p3outlier)
 dev.off()
 
+
+#make map of observed with the same color scale as the predicted smooth maps and any value over the max predicted value is red
+#used 
+fia_na$outlier <- paste(">",max(fia_na$pred_biomass, na.rm = TRUE))
+fia_na$outlier[fia_na$obs_biomass <= max(fia_na$pred_biomass, na.rm = TRUE)] <- NA
+
+
+p3outlier_na = ggplot(data = subset(fia_na, fia_na$obs_biomass < max(fia_na$pred_biomass, na.rm = TRUE)), aes(x=x, y=y,colour=obs_biomass))+ geom_point(shape=15, cex=3)+
+  scale_color_gradientn(colours = terrain.colors(7))  +
+  geom_point(data = subset(fia_na, fia_na$obs_biomass > max(fia_na$pred_biomass, na.rm = TRUE)), aes(x=x, y=y, fill=outlier), shape = 15, cex = 3, colour = "red") + 
+  theme(text = element_text(size=25), axis.text.x = element_text(size=25), axis.text.y = element_text(size=25), 
+        axis.title.x = element_text(size=25), axis.title.y = element_text(size=25)) + ggtitle(paste("Total Biomass no NAs with Outliers"))
+
+p3outlier_na
+
+png(paste("./stats/output/figures/Total-Observed-Biomass-noNAs-Outlier-v0.1.png", sep = " "),   height = 768, width=1024)
+print(p3outlier_na)
+dev.off()
+
