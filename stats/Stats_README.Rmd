@@ -1,0 +1,60 @@
+#Stats README
+
+This code was creatd by Chris Paciorek and modified by Jody Peters.  It uses essentially the same 2 stage model applied to the
+PLS biomass estimates (i.e., the code in twostagemodelup_bam.R in GitHub repo: https://github.com/PalEON-Project/biomass for PLS biomass fitting). But this code has slightly different preprocessing steps to prepare the FIA inputs to bam()
+
+## File Descriptions
+### Input files
+1. biom_fia_pecan_v0.1.csv - has the biomass estimates from the FIA data.  This file is the same as the biom_fia_pecan.csv in the data/output files of this repository.  Jody just added the version number when she uploaded it to the wiki.
+2. fia_paleongrid_albers.csv - file that connects lists the FIA plots in each PalEON grid cell
+3. paleonmask.nc
+4. FIATree_Summary.csv - spreadsheet of the frequency and percent/rounded percent of tree taxa in the FIA data. Column 5 indicated which taxa were modeled wiht the PLS data and column 6 notes which taxa were modeled with the FIA data.
+
+### Code files and Notes
+1. preprocess_biomass.R - code to process the FIA data in order to run it through the 2 stage biomass model in the fit_bam.R file.  Near the bottom of this file is a loop that runs each taxa through the fit_bam.R file. That is followed with code that calculates the raw average biomass of all taxa combined. The average biomass of all taxa combined is run through the fit_bam_totalbiomass.R code.  
+2. fit_bam.R - 2 stage biomass model that is applied to each individual taxon.  This code also includes the plots of the biomass estimated from the bam().  When you run the loop in the preprocess_bam.R it automatically connects to this file. If you want to run a single taxon, then you would manually go through the code in this file.
+3. fit_bam_totalbiomass.R - just the 2nd stage of the 2 stage biomass model from the fit_bam.R. Use this file after you run the code at the bottom of the preprocess_biomass.R file
+
+Jody has run the preprocess_biomass, fit_bam and fit_bam_totalbiomass which produced the files in the output folder
+
+4. extracode.R - this is code Jody created to do some data exploration mainly focused on the output from all the taxa combined.
+
+
+### Output files and figure
+1. For each individual taxon as well as the average biomass for all taxa combined there are csv files for: 
+  i. the original biomass observations that went into the 2 stage model (Taxa.observations.csv), 
+  ii. the predicted biomass output from the 2 stage model (Taxa.prediction.csv)and 
+  iii. the predicted biomass standarad deviations (Taxa.uncertainty.csv) for each grid cell.
+
+2. Figures are: 
+  i.plots of the smoothed biomass predictions for each taxon (Taxa-biomass-mean-smooth.png) and 
+  ii. histograms of the standard deviations for each taxon (Taxa-biomass-sdhist.png).
+
+3. For the average biomass for all taxa combined there is: 
+  i. an observed vs predicted scatterplot (obs_v_preds-biomass.png), 
+  ii. box plots of the observed values (BoxPlot-total-biomass-Observed-v0.1.png) and those of the predicted values (BoxPlot-total-biomass-Predicted-v0.1.png), 
+  iii. a smoothed plot of biomass for all taxa combined in blue and white (total-biomasspercell-mean-smooth_v0.1.png), 
+  iv. plots of total observed biomass in terrain colors with NAs for cells that do not have FIA plots in them (Total-biomass-Observed-terraincolors-v0.1.png) and without NAs (total-biomass-Observed-noNAs-terraincolors-v0.1.png),
+  v. plot of biomass for all taxa combined in terrain colors (Total-biomass-Predicted-terraincolors-v0.1.png)
+  vi. plots with outlier cells.  These are cells with observation values greater than 38 whic is the max predicted biomass value.  There are two plots one with the NA cells included and one with them removed.  There is actually no difference between these two maps, so the NA cells must not have been mapped in the origina Outlier map.
+
+
+
+### 6-2-17 Three Things to Consider or be Aware of
+1. There are 198 cells that do not end up in the final biomass predictions because the way the paleonmask.nc is.  We need to decide whether to follow up with Simon about this.  Below are more details about this.
+
+The orginal PalEON grid "albers" has 7649 observations/grid cells, but the prediction outputs only have 7451 observations/grid cells.  
+Chris looked into this and says the following. 
+
+It looks like the Paleon grid (represented by 'pred_grid' and obtained from the mask file) masks out some areas along the state and lake boundaries that do seem to have FIA data. Thus when 'preds' and 'albers' are merged, the points that are in 'albers' but not in 'preds' are lost. 
+ In particular the Apostle Islands don't seem to be part of masked Paleon grid. See the blue points after running the code below. I suspect this isn't a real problem, but we could talk with Simon about the masking if it seems like a concern. Note that in the fitting we do use those 'lost' points that are on the edges/islands. 
+
+You can see the lost (blue) points by running this after the merge of 'albers' and 'preds':
+plot(albers$x,albers$y,col='blue',pch=16)
+points(preds2$x,preds2$y,col='red',pch=16)
+
+2. There are NA values in the observed data where we do not have FIA plots in PalEON grid cells. The biomass model smooths over those cells so we do have predicted biomass values for all PalEON grid cells.
+
+3. Chris's assessment of the biomass model in general:
+"the raw biomass values are noisy, as we expect. I plotted the observed cell-level values where I set all values that are >60 to 60. When I look at that image compared to the predictions, things look reasonable (squinting to smooth the raw values by eye). So I think the prediction fitting is fine. As you say part of the point of the stats model is to smooth over grid cells with no data so we should have predictions everywhere [this is in reference to Jody's question about cells with NA in the input file vs all cells having biomass values in the predictions files]. This is what is in the 'preds' object before it is merged with 'albers' -- the predictions on the full paleon grid."
+
