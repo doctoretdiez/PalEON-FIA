@@ -4,7 +4,7 @@ fit <- function(fulldata, grid, k_occ, k_pot, taxon, unc = 'bayes') {
     library(mgcv)
     
     data <- fulldata %>% filter(PalEON == taxon)
-    write.csv(data[, c('PalEON','cell','total','x', 'y', 'biomass_avg','count')], paste0("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/",taxon, ".observations_v0.1.csv"))
+    write.csv(data[, c('PalEON','cell','total','x', 'y', 'biomass_avg','count')], paste0("./stats/output/",taxon, ".observations_v0.1.csv"))
     grid <- grid / 8000
     
     
@@ -85,12 +85,12 @@ fit <- function(fulldata, grid, k_occ, k_pot, taxon, unc = 'bayes') {
     
     preds2 = merge(preds,albers,by=c('x','y'))
     
-    write.csv(preds2[, c('x', 'y', 'cell','mean')], paste0("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/",taxon, ".prediction_v0.1.csv"))
-    write.csv(preds2[, c('x', 'y', 'cell', 'sd')], paste0("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/",taxon, ".uncertainty_v0.1.csv"))
+    write.csv(preds2[, c('x', 'y', 'cell','mean')], paste0("./stats/output/",taxon, ".prediction_v0.1.csv"))
+    write.csv(preds2[, c('x', 'y', 'cell', 'sd')], paste0("./stats/output/",taxon, ".uncertainty_v0.1.csv"))
     
     
     
-    png(filename = paste("./stats/output/figures/",taxon, "-biomass-sdhist.png", sep=''),  height = 768, width=1024)
+    png(filename = paste("./stats/output/figures_v0.1/",taxon, "-biomass-sdhist.png", sep=''),  height = 768, width=1024)
     hist(pp.sd,nclass=50,main = paste('Standard Deviation'),xlab = paste('St.dev of', taxon, 'biomass'))
     dev.off()
     
@@ -129,7 +129,7 @@ fit <- function(fulldata, grid, k_occ, k_pot, taxon, unc = 'bayes') {
                                                       axis.title.x = element_text(size=25),
                                                       axis.title.y = element_text(size=25)) + ggtitle(paste(taxon))
     
-    png(paste("./stats/output/figures/",taxon,"-biomass-mean-smooth.png", sep = " "),   height = 768, width=1024)
+    png(paste("./stats/output/figures_v0.1/",taxon,"-biomass-mean-smooth.png", sep = " "),   height = 768, width=1024)
     print(p1a)
     dev.off()
     

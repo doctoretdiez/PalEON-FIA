@@ -5,7 +5,6 @@ library(ncdf4)
 
 rm(list=ls())
 
-#source('C:/Users/paleolab/Desktop/PalEON-FIA/stats/fit_bam.R')
 
 # download files from Wiki:
 # biom_fia_pecan_v0.1.zip (unzip this)
@@ -14,14 +13,14 @@ rm(list=ls())
 
 # decide if use Jenkins or Pecan allometry. 
 #### NOTE:5-26-17 JP decided to use Jenkins since the biomass manuscript is comparing FIA biomass to PLS biomass and the PLS biomass was estimated with the Jenkin's allometries. ###
-# for now if use Pecan, just use point estimate, namely biomass_pecan_pred_mean
+# for now if you use Pecan, just use point estimate, namely biomass_pecan_pred_mean
 # CJP believes that 'pred' are the columns to use as these should incorporate tree-to-tree variability
 
 UMW <- c(26, 27, 55) # upper midwest FIPS (MN, WI, MI)
 LMW <- c(17, 18)     # lower midwest FIPS (IL and IN)
 states <- c(UMW, LMW)
 
-data_dir <- 'C:/Users/paleolab/Desktop/PalEON-FIA/stats/'
+data_dir <- './stats/'
 
 data_file <- 'biom_fia_pecan_v0.1.csv'
 grid_file <- 'fia_paleongrid_albers.csv'
@@ -108,7 +107,7 @@ taxa <- c("Ash", "Basswood", "Beech", "Birch", "Cedar.juniper", "Cherry", "Elm",
 #Douglas fir 0.008%, Dogwood 0.002%, Uknown 0.001%, Alder 0.0007%.
 
 for(i in 1:length(taxa)){
-  source('C:/Users/paleolab/Desktop/PalEON-FIA/stats/fit_bam.R')
+  source('./stats/fit_bam.R')
   fit(fulldata = data_complete, grid = pred_grid, k_occ = k_occ, k_pot = k_pot, taxon=taxa[i], unc = 'bayes')
 }
 
@@ -146,10 +145,10 @@ unc = 'bayes'
 #after running the fit_bam.R code and getting the preds2 object, you can either run the code 
 #below when looping through each taxa.  Or you can used the read back in the predictions by
 #taxa using the following oak example code
-oak = read.csv("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/Oak.prediction_v0.1.csv")
+oak = read.csv("./stats/output/Oak.prediction_v0.1.csv")
 
 #plot the observations (albers) vs the predictions (points)
-png(filename = paste("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/figures_v0.1/198_MissingCells.png", sep=''),  height = 768, width=1024)
+png(filename = paste("./stats/output/figures_v0.1/198_MissingCells.png", sep=''),  height = 768, width=1024)
 plot(albers$x,albers$y,col='blue',pch=16)
 points(oak$x,oak$y,col='red',pch=15)
 dev.off()
