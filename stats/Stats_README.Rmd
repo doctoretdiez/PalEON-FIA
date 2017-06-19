@@ -22,9 +22,9 @@ Jody has run the preprocess_biomass, fit_bam and fit_bam_totalbiomass which prod
 
 ### Output files and figure
 1. For each individual taxon as well as the average biomass for all taxa combined there are csv files for: 
-  i. the original biomass observations that went into the 2 stage model (Taxa.observations.csv), 
-  ii. the predicted biomass output from the 2 stage model (Taxa.prediction.csv)and 
-  iii. the predicted biomass standarad deviations (Taxa.uncertainty.csv) for each grid cell.
+  i. the original biomass observations that went into the 2 stage model (Taxa.observations_v0.1.csv), 
+  ii. the predicted biomass output from the 2 stage model (Taxa.prediction_v0.1.csv)and 
+  iii. the predicted biomass standarad deviations (Taxa.uncertainty_v0.1.csv) for each grid cell.
 
 2. Figures are: 
   i.plots of the smoothed biomass predictions for each taxon (Taxa-biomass-mean-smooth.png) and 
