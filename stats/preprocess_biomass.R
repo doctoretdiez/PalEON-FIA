@@ -5,7 +5,7 @@ library(ncdf4)
 
 rm(list=ls())
 
-#source('C:/Users/jmurray7/Desktop/PalEON-FIA/stats/fit_bam.R')
+#source('C:/Users/paleolab/Desktop/PalEON-FIA/stats/fit_bam.R')
 
 # download files from Wiki:
 # biom_fia_pecan_v0.1.zip (unzip this)
@@ -21,7 +21,7 @@ UMW <- c(26, 27, 55) # upper midwest FIPS (MN, WI, MI)
 LMW <- c(17, 18)     # lower midwest FIPS (IL and IN)
 states <- c(UMW, LMW)
 
-data_dir <- 'C:/Users/jmurray7/Desktop/PalEON-FIA/stats/'
+data_dir <- 'C:/Users/paleolab/Desktop/PalEON-FIA/stats/'
 
 data_file <- 'biom_fia_pecan_v0.1.csv'
 grid_file <- 'fia_paleongrid_albers.csv'
@@ -108,7 +108,7 @@ taxa <- c("Ash", "Basswood", "Beech", "Birch", "Cedar.juniper", "Cherry", "Elm",
 #Douglas fir 0.008%, Dogwood 0.002%, Uknown 0.001%, Alder 0.0007%.
 
 for(i in 1:length(taxa)){
-  source('C:/Users/jmurray7/Desktop/PalEON-FIA/stats/fit_bam.R')
+  source('C:/Users/paleolab/Desktop/PalEON-FIA/stats/fit_bam.R')
   fit(fulldata = data_complete, grid = pred_grid, k_occ = k_occ, k_pot = k_pot, taxon=taxa[i], unc = 'bayes')
 }
 
@@ -140,4 +140,22 @@ fulldata = avgbiomass_data_complete
 grid = pred_grid
 unc = 'bayes'
 
+###########################################################################################
+###  Code to Examine the 198 Lost/Missing Cells in Predictions compared to Observations ###
+###########################################################################################
+#after running the fit_bam.R code and getting the preds2 object, you can either run the code 
+#below when looping through each taxa.  Or you can used the read back in the predictions by
+#taxa using the following oak example code
+oak = read.csv("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/Oak.prediction_v0.1.csv")
 
+#plot the observations (albers) vs the predictions (points)
+png(filename = paste("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/figures_v0.1/198_MissingCells.png", sep=''),  height = 768, width=1024)
+plot(albers$x,albers$y,col='blue',pch=16)
+points(oak$x,oak$y,col='red',pch=15)
+dev.off()
+
+#You can see the lost (blue) points by running this after the merge of 'albers' and 'preds':
+
+#original code from Chris if you are running a taxa within the loop and get the preds2 output from line 96 of fit_bam.R
+plot(albers$x,albers$y,col='blue',pch=16)
+points(preds2$x,preds2$y,col='red',pch=16)

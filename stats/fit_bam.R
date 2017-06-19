@@ -4,7 +4,7 @@ fit <- function(fulldata, grid, k_occ, k_pot, taxon, unc = 'bayes') {
     library(mgcv)
     
     data <- fulldata %>% filter(PalEON == taxon)
-    write.csv(data[, c('PalEON','cell','total','x', 'y', 'biomass_avg','count')], paste0("C:/Users/jmurray7/Desktop/PalEON-FIA/stats/output/",taxon, ".observations_v0.1.csv"))
+    write.csv(data[, c('PalEON','cell','total','x', 'y', 'biomass_avg','count')], paste0("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/",taxon, ".observations_v0.1.csv"))
     grid <- grid / 8000
     
     
@@ -85,8 +85,8 @@ fit <- function(fulldata, grid, k_occ, k_pot, taxon, unc = 'bayes') {
     
     preds2 = merge(preds,albers,by=c('x','y'))
     
-    write.csv(preds2[, c('x', 'y', 'cell','mean')], paste0("C:/Users/jmurray7/Desktop/PalEON-FIA/stats/output/",taxon, ".prediction_v0.1.csv"))
-    write.csv(preds2[, c('x', 'y', 'cell', 'sd')], paste0("C:/Users/jmurray7/Desktop/PalEON-FIA/stats/output/",taxon, ".uncertainty_v0.1.csv"))
+    write.csv(preds2[, c('x', 'y', 'cell','mean')], paste0("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/",taxon, ".prediction_v0.1.csv"))
+    write.csv(preds2[, c('x', 'y', 'cell', 'sd')], paste0("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/",taxon, ".uncertainty_v0.1.csv"))
     
     
     

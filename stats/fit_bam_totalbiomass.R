@@ -70,8 +70,8 @@ preds <- data.frame(x = grid$x*8000, y = grid$y*8000, mean = mass, sd = pp.sd)
 
 preds2 = merge(preds,albers,by=c('x','y'))
 
-write.csv(preds2[, c('x', 'y', 'cell','mean')], paste0("C:/Users/jmurray7/Desktop/PalEON-FIA/stats/output/total.prediction_v0.1.csv"))
-write.csv(preds2[, c('x', 'y', 'cell', 'sd')], paste0("C:/Users/jmurray7/Desktop/PalEON-FIA/stats/output/total.uncertainty_v0.1.csv"))
+write.csv(preds2[, c('x', 'y', 'cell','mean')], paste0("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/total.prediction_v0.1.csv"))
+write.csv(preds2[, c('x', 'y', 'cell', 'sd')], paste0("C:/Users/paleolab/Desktop/PalEON-FIA/stats/output/total.uncertainty_v0.1.csv"))
 
 
 
