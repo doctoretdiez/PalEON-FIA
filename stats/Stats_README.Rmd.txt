@@ -5,10 +5,10 @@ PLS biomass estimates (i.e., the code in twostagemodelup_bam.R in GitHub repo: h
 
 ## File Descriptions
 ### Input files
-1. biom_fia_pecan_v0.1.csv - has the biomass estimates from the FIA data.  This file is the same as the biom_fia_pecan.csv in the data/output files of this repository.  Jody just added the version number when she uploaded it to the wiki.
+1. biom_fia_pecan_v0.1.csv - has the biomass estimates from the FIA data.  This file is the same as the biom_fia_pecan.csv in the data/output files of this repository.  Jody just added the version number when she uploaded it to the wiki. For the FIA biomass statistical estimates we used the biomass estimated with the Jenkin's allometries. We also have the FIA biomass estimated with the FIA allometry and the PEcAn allometries, but since the PLS biomass was statistically estimated using input based on the Jenkin's allometries, that is what we have used in the FIA biomass 2 stage model.
 2. fia_paleongrid_albers.csv - file that connects lists the FIA plots in each PalEON grid cell
 3. paleonmask.nc
-4. FIATree_Summary.csv - spreadsheet of the frequency and percent/rounded percent of tree taxa in the FIA data. Column 5 indicated which taxa were modeled wiht the PLS data and column 6 notes which taxa were modeled with the FIA data.
+4. FIATree_Summary.csv - spreadsheet of the frequency and percent/rounded percent of tree taxa in the FIA data. Column 5 indicated which taxa were modeled with the PLS data and column 6 notes which taxa were modeled with the FIA data.
 
 ### Code files and Notes
 1. preprocess_biomass.R - code to process the FIA data in order to run it through the 2 stage biomass model in the fit_bam.R file.  Near the bottom of this file is a loop that runs each taxa through the fit_bam.R file. That is followed with code that calculates the raw average biomass of all taxa combined. The average biomass of all taxa combined is run through the fit_bam_totalbiomass.R code.  
@@ -21,10 +21,15 @@ Jody has run the preprocess_biomass, fit_bam and fit_bam_totalbiomass which prod
 
 
 ### Output files and figure
-1. For each individual taxon as well as the average biomass for all taxa combined there are csv files for: 
+1. For each individual taxon as well as the average biomass for all taxa combined there are individual csv files for: 
   i. the original biomass observations that went into the 2 stage model (Taxa.observations_v0.1.csv), 
   ii. the predicted biomass output from the 2 stage model (Taxa.prediction_v0.1.csv)and 
   iii. the predicted biomass standarad deviations (Taxa.uncertainty_v0.1.csv) for each grid cell.
+
+  There are also 3 files with the observations, predictions and uncertainty for each taxa combined for each grid cell in the following three files (there are more entries in the observation file compared to the prediction and uncertainty files - see note below).  You will most likely want to use these 3 files rather than the files for each individual taxon.
+  1) FIA_biomass_observations_v0.1.csv
+  2) FIA_biomass_predictions_v0.1.csv
+  3) FIA_biomass_uncertainty_v0.1.csv
 
 2. Figures are: 
   i.plots of the smoothed biomass predictions for each taxon (Taxa-biomass-mean-smooth.png) and 
