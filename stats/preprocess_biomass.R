@@ -123,12 +123,14 @@ unc = 'bayes'
 #######################################################
 ##  average biomass per cell for all taxa combined   ##
 #######################################################
-biomass_by_cell <- data_by_plot %>% group_by(cell) %>%
-  summarize(avg_biomass = mean(biomass_total),count = n())
-head(biomass_by_cell)
+total_biomass_by_plot <- data_by_plot %>% group_by(plt_cn) %>%
+  summarize(total_biomass = sum(biomass_total))%>%
+  inner_join(grid, by = c('plt_cn' = 'CN'))
+
+biomass_by_cell <- total_biomass_by_plot %>% group_by(cell) %>%
+  summarize(avg_biomass_by_plot = mean(total_biomass), count = n())
 
 avgbiomass_data_complete <- albers %>% left_join(biomass_by_cell, by = c('cell' = 'cell'))
-head(avgbiomass_data_complete)
 
 avgbiomass_data_complete$count[is.na(avgbiomass_data_complete$count)] <- 0
 
