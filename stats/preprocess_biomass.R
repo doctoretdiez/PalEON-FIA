@@ -120,9 +120,9 @@ taxon = 'Ash'
 unc = 'bayes'
 
 
-#######################################################
-##  average biomass per cell for all taxa combined   ##
-#######################################################
+#####################################################################
+##  biomass averaged by plot in each cell for all taxa combined   ###
+#####################################################################
 total_biomass_by_plot <- data_by_plot %>% group_by(plt_cn) %>%
   summarize(total_biomass = sum(biomass_total))%>%
   inner_join(grid, by = c('plt_cn' = 'CN'))
