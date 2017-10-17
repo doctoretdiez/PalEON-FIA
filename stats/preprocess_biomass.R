@@ -134,6 +134,8 @@ avgbiomass_data_complete <- albers %>% left_join(biomass_by_cell, by = c('cell' 
 
 avgbiomass_data_complete$count[is.na(avgbiomass_data_complete$count)] <- 0
 
+write.csv(avgbiomass_data_complete, "./stats/output/total.observation_v0.2.csv", row.names = FALSE)
+
 
 # code to run total biomass,
 # run the next 4 lines, then run the code within the function in the fit_bam_totalbiomass.R file.
@@ -160,3 +162,80 @@ dev.off()
 #original code from Chris if you are running a taxa within the loop and get the preds2 output from line 96 of fit_bam.R
 plot(albers$x,albers$y,col='blue',pch=16)
 points(preds2$x,preds2$y,col='red',pch=16)
+
+
+###########################################################
+### Combine Total Biomass Observed, Predicted, and SD #####
+###########################################################
+
+observed = read.csv("./stats/output/total.observation_v0.2.csv", header = TRUE, stringsAsFactors = FALSE)
+predicted = read.csv("./stats/output/total.prediction_v0.2.csv", header = TRUE, stringsAsFactors = FALSE)
+uncertainty = read.csv("./stats/output/total.uncertainty_v0.2.csv", header = TRUE, stringsAsFactors = FALSE)
+
+obs.pred = observed %>% left_join(predicted, by = c('x' = 'x', 'y' = 'y',
+                                                       'cell' = 'cell'))
+total.summary =obs.pred %>% left_join(uncertainty, by = c('x' = 'x', 'y' = 'y',
+                                                        'cell' = 'cell'))
+write.csv(total.summary,"./stats/output/total.summary_v0.2.csv", row.names = FALSE)
+
+#########################################################################################################
+###  Code to Examine the 198 Lost/Missing Cells in Total Biomass Predictions compared to Observations ###
+#########################################################################################################
+# this is the same code as above, but done for the total biomass per PalEON grid cell
+png(filename = paste("./stats/output/198_MissingCells_v0.2.png", sep=''),  height = 768, width=1024)
+plot(albers$x,albers$y,col='blue',pch=16)
+points(predicted$x,predicted$y,col='red',pch=15)
+dev.off()
+
+
+#################################################################################################
+## Code to switch out Total observations, predictions and uncertainty in v0.1 FIA_biomass csvs ##
+#################################################################################################
+
+#Switch out v0.1 Total biomass observations for v0.2 Total biomass observations
+FIA.obs = read.csv("./stats/output/FIA_biomass_observations_v0.1.csv")
+FIA.obs = FIA.obs[,-23]
+head(FIA.obs)
+head(observed)
+
+
+colnames(observed) = c("x","y","cell","Total","count")
+
+FIA.obs.total =FIA.obs %>% left_join(observed, by = c('x' = 'x', 'y' = 'y',
+                                                      'cell' = 'cell'))
+
+head(FIA.obs.total)
+FIA.obs.total = FIA.obs.total[,-24]
+write.csv(FIA.obs.total,"./stats/output/FIA_biomass_observations_v0.2.csv", row.names = FALSE)
+
+
+#Switch out v0.1 Total biomass predictions for v0.2 Total biomass predictions
+FIA.preds = read.csv("./stats/output/FIA_biomass_predictions_v0.1.csv")
+FIA.preds = FIA.preds[,-23]
+head(FIA.preds)
+head(predicted)
+
+colnames(predicted) = c("x","y","cell","Total")
+
+FIA.preds.total =FIA.preds %>% left_join(predicted, by = c('x' = 'x', 'y' = 'y',
+                                                           'cell' = 'cell'))
+
+head(FIA.preds.total)
+write.csv(FIA.preds.total,"./stats/output/FIA_biomass_predictions_v0.2.csv", row.names = FALSE)
+
+
+#Switch out v0.1 Total biomass uncertainty for v0.2 Total biomass uncertainty
+FIA.unc = read.csv("./stats/output/FIA_biomass_uncertainty_v0.1.csv")
+FIA.unc = FIA.unc[,-23]
+head(FIA.unc)
+head(uncertainty)
+
+colnames(uncertainty) = c("x","y","cell","Total")
+
+FIA.unc.total =FIA.unc %>% left_join(uncertainty, by = c('x' = 'x', 'y' = 'y',
+                                                         'cell' = 'cell'))
+
+head(FIA.unc.total)
+write.csv(FIA.unc.total,"./stats/output/FIA_biomass_uncertainty_v0.2.csv", row.names = FALSE)
+
+
