@@ -7,11 +7,15 @@
 
 agg_to_plot <- function(tree_data, column, write_out = TRUE) {
   
-  long_plot <- tree_data %>% dplyr::group_by(plt_cn, spcd) %>% dplyr::summarise(paste0("biomass = sum(",column,")"))
+  long_plot <- tree_data %>% 
+    dplyr::group_by(plt_cn, spcd) %>% 
+    dplyr::summarise(paste0("biomass = sum(",column,")"))
   
   colnames(long_plot)[3] <- "biomass"
   
-  wide_plot <- long_plot %>% tidyr::spread(spcd, biomass) %>% as.data.frame
+  wide_plot <- long_plot %>% 
+    tidyr::spread(spcd, biomass) %>% 
+    as.data.frame
   
   if (write_out == TRUE) write.csv(wide_plot, paste0('data/output/',column, '.csv'))
   

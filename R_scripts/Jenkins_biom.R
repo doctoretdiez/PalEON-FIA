@@ -9,7 +9,7 @@
 jenkins_biom <- function(x, write_out = TRUE) {
 
   #Import tree names and codes.
-  spp.codes <- read.csv('Conversion_tables/FIA_conversion_v02-SGD.csv',
+  spp.codes <- read.csv('Conversion_tables/FIA_conversion_v03.csv',
                         header = TRUE, stringsAsFactors = FALSE) %>%
     dplyr::select(spcd, PalEON) %>%
     dplyr::distinct(spcd, PalEON)

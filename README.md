@@ -26,6 +26,7 @@ localhost:5432:postgres:postgres:password
 Note that multiple lines can be included in this file.
 
 ## Setting up the program `pgfutter`
+
 1.	Move the downloaded `.exe` file (for example `pgfutter_windows_amd64.exe`) to a new directory somewhere on your computer.
 2. You will be executing the file from the command line, so you'll want to shorten then name. Rename the file `pgfutter.exe`
 3. To add this directory to your computer's `PATH`: 
@@ -37,6 +38,7 @@ Note that multiple lines can be included in this file.
 NOTE:  Changes to the System `PATH` will only take effect when a Commandline window is re-opened.  You will not be able to access `pgfutter` from any windows that are currently open.
 
 ## Importing FIA data into PostgreSQL
+
 The syntax for `pgfutter` on Windows is as follows (once you've opened a command line window using `cmd`):
 
 ```

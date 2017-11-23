@@ -45,6 +45,7 @@ tree_data <- jenkins_biom(surv.current, write_out = TRUE)
 ## Estimate FIA Biomass
 
 Use the FIA biomass estimates to get tree level biomass:
+
 ```{r FIA_biomass}
 
 source('R_scripts/FIA_biom.R')

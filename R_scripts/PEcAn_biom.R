@@ -62,7 +62,7 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
   # SJG - I didn't recode every spcd, I only coded spcds that occur in the
   # FIA data for the PalEON domain.
 
-  spp.codes <- spp.codes %>% filter(!new_pft == '')
+  spp.codes <- spp.codes %>% dplyr::filter(!new_pft == '')
   
   assertthat::assert_that(all(unique(tree_data$spcd) %in% spp.codes$spcd))
   
@@ -73,9 +73,9 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
     codes <- unlist(strsplit(spp.codes$new_pft[i], split = ';'))
     
     pfts[[i]] <- na.omit(data.frame(spcd    = codes,
-                            acronym = spp.codes$acronym[match(codes, spp.codes$spcd)]))
+                                    acronym = spp.codes$acronym[match(codes, spp.codes$spcd)]))
                             
-    names(pfts)[i] <- spp.codes$acronym[i]          
+    names(pfts)[i] <- spp.codes$acronym[i]        
     
   }
   
@@ -84,7 +84,6 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
   maxdbh <- ceiling(max(tree_data$dbh))
 
   if (!length(list.files(outdir, pattern = "Rdata")) == 8) {
-    # There are only eight written Rdata files since the Evergreen PFT fails to write.
     
       allom.stats <- AllomAve(pfts,
                               components = 2,
@@ -108,15 +107,6 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
                            pecan_conf_500  = NA,
                            pecan_conf_975  = NA)
 
-#  @crollinson proposed a solution in https://github.com/PalEON-Project/PalEON-FIA/issues/5
-#  I haven't implemented it, but I'll look into it.  This is the
-#  abortive start.
-#  
-#  for (i in 1:length(unique(tree_data$pft))) {
-#    start <- Sys.time()
-#    
-#  }
-  
   mins <- rep(NA, 50)
   
   tree_data$PalEON <- gsub('/', '.', tree_data$PalEON)
@@ -125,7 +115,7 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
 
     start <- Sys.time()
     
-    pred <- allom.predict(allom.fit, 
+    pred <- allom.predict(allom.fit,
                           dbh = tree_data$dbh[i], 
                           pft = tree_data$PalEON[i])
     
@@ -146,6 +136,7 @@ pecan_biom <- function(x, write_out = TRUE, plotting = FALSE) {
     cat(paste0("\r", i, " of ", nrow(tree_data), ".  You have about ", 
                round(mean(mins, na.rm = TRUE), 0), " minutes left."))
     flush.console()
+    
   }
   
   if (plotting == TRUE) {
