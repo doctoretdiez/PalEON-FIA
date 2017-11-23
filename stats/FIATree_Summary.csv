@@ -1,0 +1,31 @@
+tree,Freq,Percent,Percent,In PLS,Biomass Model
+Alder,2,0.000663051,0,Y,
+Unknown tree,4,0.001326102,0,N,
+Dogwood,5,0.001657627,0,Otherhardwood,
+Douglas fir,26,0.008619661,0,N,
+Buckeye,189,0.062658303,0,N,
+Willow,503,0.166757284,0,Y,
+Ironwood,519,0.17206169,0,Y,
+Sycamore,699,0.231736265,0,Otherhardwood,
+Sweet gum,702,0.232730841,0,Otherhardwood,
+Hackberry,890,0.295057619,0,Y,
+Black gum,997,0.330530838,0,Otherhardwood,
+Walnut,2104,0.697529473,1,Y,Done
+Tamarack,2797,0.927276585,1,Y,Done
+Tulip poplar,3409,1.130170139,1,Otherhardwood,
+Elm,3747,1.242225729,1,Y,Done
+Other hardwood,4293,1.423238605,1,Y,Done
+Hickory,6083,2.016669098,2,Y,Done
+Basswood,6851,2.271280616,2,Y,Done
+Fir,7277,2.412510443,2,Y,Done
+Beech,7531,2.496717898,2,Y,Done
+Cherry,9634,3.193915846,3,Y,Done
+Spruce,12705,4.212030394,4,Y,Done
+Hemlock,13690,4.538582928,5,Y,Done
+Ash,16242,5.384635786,5,Y,Done
+Cedar/juniper,16242,5.384635786,5,Y,Done
+Birch,19353,6.416011351,6,Y,Done
+Poplar,21127,7.004137437,7,Y,Done
+Pine,30651,10.16158549,10,Y,Done
+Oak,39421,13.06906337,13,Y,Done
+Maple,73943,24.51398374,25,Y,Done
