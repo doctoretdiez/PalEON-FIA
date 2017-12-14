@@ -99,6 +99,13 @@ Note: To run a query in Pg Admin III, click on the “Execute SQL Queries” but
 2.	Use the text in output_combine.txt to combine all necessary tables. The query runs most efficiently with only 1 execute statement, so it is advised to choose only one EXECUTE statement within the loop. Essentially, this query is executed 3 separate times, once for each table of interest. Note the above step creates the table using CT data, while this step adds all states except CT. If not using CT data, replace with a new state and update both queries.
 3.	Ensure that no states were added multiple times by running Remove_duplciates.txt and comparing row counts to the original table. They should be identical.
 
+## Create SQLite database with data needed for biomass data product (new step for biomass product production)
+
+1.      Run `biomass_product_workflow/read_postgres.sh` to create the Postgres database (code set up for a Linux machine).
+2.      Create an SQLite database containing only the plot, survey, and tree tables using `biomass_product_workflow/create_sqlite_db.R`.
+3.      Andria is now set up to rerun the queries to include older survey cycles. This is the current status as of 12/14/17.
+
+
 ## Merge FIA data with true location data
 1.	In order to join two tables, all selected columns names must not have duplicates. Change the “cn” column from the actual coordinates table (nrs_actual_coords_forested_plots) to “cnFIA.”
 2.	Use the text in FIA_Plot_Merge.txt to create a plot table with the real lat/lon coordinates. 
